@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Pvguerra\LaravelTrakt\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelTraktCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-trakt';
 
     public $description = 'My command';
 

@@ -1,17 +1,18 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "pvguerra/laravel-trakt",
+    "description": "Integrate Laravel with Trakt API",
     "keywords": [
-        ":vendor_name",
+        "pvguerra",
         "laravel",
-        ":package_slug"
+        "laravel-trakt",
+        "trakt"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/pvguerra/laravel-trakt",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Paulo Guerra",
+            "email": "paulovictorguerra@gmail.com",
             "role": "Developer"
         }
     ],
@@ -34,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "Pvguerra\\LaravelTrakt\\": "src",
+            "Pvguerra\\LaravelTrakt\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Pvguerra\\LaravelTrakt\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -54,10 +55,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Pvguerra\\LaravelTrakt\\LaravelTraktServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LaravelTrakt": "Pvguerra\\LaravelTrakt\\Facades\\LaravelTrakt"
             }
         }
     },

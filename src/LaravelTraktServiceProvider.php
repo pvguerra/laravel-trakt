@@ -2,9 +2,9 @@
 
 namespace Pvguerra\LaravelTrakt;
 
+use Pvguerra\LaravelTrakt\Commands\LaravelTraktCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Pvguerra\LaravelTrakt\Commands\LaravelTraktCommand;
 
 class LaravelTraktServiceProvider extends PackageServiceProvider
 {

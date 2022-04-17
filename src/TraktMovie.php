@@ -9,44 +9,43 @@ class TraktMovie extends LaravelTrakt
     /**
      * Returns a single movie's details.
      *
-     * https://trakt.docs.apiary.io/#reference/movies/summary/get-a-movie
+     * https://trakt.docs.apiary.io/#reference/movies/summary
      * @param string $traktId
-     * @param ?string $extended
      * @return array
      */
-    public function get(string $traktId, ?string $extended = null): array
+    public function get(string $traktId): array
     {
-        $uri = $extended ? "movies/$traktId?extended=$extended" : "movies/$traktId";
+        $uri = $this->apiUrl . "movies/$traktId?extended=full";
 
-        return Http::withHeaders($this->headers)->get($this->apiUrl . $uri)->json();
+        return Http::withHeaders($this->headers)->get($uri)->json();
     }
 
     /**
      * Returns all movies being watched right now. Movies with the most users are returned first.
      *
      * https://trakt.docs.apiary.io/#reference/movies/trending
-     * @param ?string $extended
+     * @param ?string $filters
      * @return array
      */
-    public function trending(?string $extended = null): array
+    public function trending(?string $filters = null): array
     {
-        $uri = $extended ? "movies/trending?extended=$extended" : "movies/trending";
+        $uri = $this->apiUrl . "movies/trending?extended=full" . ($filters ? "&$filters" : "");
 
-        return Http::withHeaders($this->headers)->get($this->apiUrl . $uri)->json();
+        return Http::withHeaders($this->headers)->get($uri)->json();
     }
 
     /**
      * Returns the most popular movies.
      * Popularity is calculated using the rating percentage and the number of ratings.
      *
-     * https://trakt.docs.apiary.io/#reference/movies/populae/get-a-movie
-     * @param ?string $extended
+     * https://trakt.docs.apiary.io/#reference/movies/popular
+     * @param ?string $filters
      * @return array
      */
-    public function popular(?string $extended = null): array
+    public function popular(?string $filters = null): array
     {
-        $uri = $extended ? "movies/popular?extended=$extended" : "movies/popular";
+        $uri = $this->apiUrl . "movies/popular?extended=full" . ($filters ? "&$filters" : "");
 
-        return Http::withHeaders($this->headers)->get($this->apiUrl . $uri)->json();
+        return Http::withHeaders($this->headers)->get($uri)->json();
     }
 }

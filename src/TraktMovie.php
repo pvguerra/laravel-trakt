@@ -64,4 +64,20 @@ class TraktMovie extends LaravelTrakt
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
+
+    /**
+     * Returns the most played (a single user can watch multiple times) movies in the specified time period,
+     * defaulting to weekly. All stats are relative to the specific time period.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/played
+     * @param string $period
+     * @param ?string $filters
+     * @return array
+     */
+    public function played(string $period = 'weekly', ?string $filters = null): array
+    {
+        $uri = $this->apiUrl . "movies/played/$period?extended=full" . ($filters ? "&$filters" : "");
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
 }

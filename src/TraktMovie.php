@@ -186,4 +186,45 @@ class TraktMovie extends LaravelTrakt
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
+
+    /**
+     * Returns all lists that contain this movie. By default, personal lists are returned sorted by the most popular.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/lists
+     * @param string $traktId
+     * @param string $type
+     * @param string $sort
+     * @param integer $page
+     * @param integer $limit
+     * @return array
+     */
+    public function lists(
+        string $traktId,
+        string $type = 'personal',
+        string $sort = 'popular',
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl . "movies/$traktId/lists/$type/$sort?page=$page&limit=$limit";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all cast and crew for a movie.
+     * Each cast member will have a characters array and a standard person object.
+     * The crew object will be broken up by department into production, art, crew, costume & make-up,
+     * directing, writing, sound, camera, visual effects, lighting, and editing (if there are people
+     * for those crew positions). Each of those members will have a jobs array and a standard person object.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/people
+     * @param string $traktId
+     * @return array
+     */
+    public function people(string $traktId): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/people?extended=full";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
 }

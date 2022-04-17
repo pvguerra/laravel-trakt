@@ -227,4 +227,62 @@ class TraktMovie extends LaravelTrakt
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
+
+    /**
+     * Returns rating (between 0 and 10) and distribution for a movie.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/ratings
+     * @param string $traktId
+     * @return array
+     */
+    public function ratings(string $traktId): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/ratings";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns related and similar movies.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/related
+     * @param string $traktId
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function related(string $traktId, int $page = 1, int $limit = 10): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/related?extended=full&page=$page&limit=$limit";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns lots of movie stats.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/stats
+     * @param string $traktId
+     * @return array
+     */
+    public function stats(string $traktId): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/stats";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all users watching this movie right now.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/watching
+     * @param string $traktId
+     * @return array
+     */
+    public function watching(string $traktId): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/watching?extended=full";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
 }

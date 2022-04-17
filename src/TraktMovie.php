@@ -80,4 +80,50 @@ class TraktMovie extends LaravelTrakt
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
+
+    /**
+     * Returns the most watched (unique users) movies in the specified time period, defaulting to weekly.
+     * All stats are relative to the specific time period.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/watched
+     * @param string $period
+     * @param ?string $filters
+     * @return array
+     */
+    public function watched(string $period = 'weekly', ?string $filters = null): array
+    {
+        $uri = $this->apiUrl . "movies/watched/$period?extended=full" . ($filters ? "&$filters" : "");
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns the most collected (unique users) movies in the specified time period, defaulting to weekly.
+     * All stats are relative to the specific time period.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/collected
+     * @param string $period
+     * @param ?string $filters
+     * @return array
+     */
+    public function collected(string $period = 'weekly', ?string $filters = null): array
+    {
+        $uri = $this->apiUrl . "movies/collected/$period?extended=full" . ($filters ? "&$filters" : "");
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns the most anticipated movies based on the number of lists a movie appears on.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/anticipated
+     * @param ?string $filters
+     * @return array
+     */
+    public function anticipated(?string $filters = null): array
+    {
+        $uri = $this->apiUrl . "movies/anticipated?extended=full" . ($filters ? "&$filters" : "");
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
 }

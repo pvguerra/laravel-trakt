@@ -17,9 +17,6 @@ class LaravelTraktServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-trakt')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-trakt_table')
-            ->hasCommand(LaravelTraktCommand::class);
+            ->hasConfigFile();
     }
 }

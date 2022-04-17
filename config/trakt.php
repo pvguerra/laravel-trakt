@@ -11,7 +11,7 @@ return [
 
     'headers' => [
         'Content-type' => 'application/json',
-        'trakt-api-version' => '2',
+        'trakt-api-version' => env('TRAKT_API_VERSION', '2'),
         'trakt-api-key' => env('TRAKT_CLIENT_ID'),
     ],
 

@@ -21,6 +21,20 @@ class TraktMovie extends LaravelTrakt
     }
 
     /**
+     * Returns all title aliases for a movie. Includes country where name is different.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/aliases
+     * @param string $traktId
+     * @return array
+     */
+    public function aliases(string $traktId): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/aliases";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
      * Returns all movies being watched right now. Movies with the most users are returned first.
      *
      * https://trakt.docs.apiary.io/#reference/movies/trending
@@ -123,6 +137,52 @@ class TraktMovie extends LaravelTrakt
     public function anticipated(?string $filters = null): array
     {
         $uri = $this->apiUrl . "movies/anticipated?extended=full" . ($filters ? "&$filters" : "");
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns the top 10 grossing movies in the U.S. box office last weekend. Updated every Monday morning.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/boxoffice
+     * @return array
+     */
+    public function boxOffice(): array
+    {
+        $uri = $this->apiUrl . "movies/boxoffice?extended=full";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all releases for a movie including country, certification, release date, release type, and note.
+     * The release type can be set to unknown, premiere, limited, theatrical, digital, physical, or tv.
+     * The note might have optional info such as the film festival name for a premiere release or Blu-ray specs
+     * for a physical release. We pull this info from TMDB.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/releases
+     * @param string $traktId
+     * @param string $country
+     * @return array
+     */
+    public function releases(string $traktId, string $country = 'us'): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/releases/$country";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all translations for a movie, including language and translated values for title, tagline and overview.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/translations
+     * @param string $traktId
+     * @param string $language
+     * @return array
+     */
+    public function translations(string $traktId, string $language = 'pt'): array
+    {
+        $uri = $this->apiUrl . "movies/$traktId/translations/$language";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }

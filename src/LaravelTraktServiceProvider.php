@@ -2,7 +2,6 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Pvguerra\LaravelTrakt\Commands\LaravelTraktCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

@@ -481,4 +481,87 @@ class TraktShow extends LaravelTrakt
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
+
+    /**
+     * Returns a single episode's details. All date and times are in UTC and were calculated using
+     * the episode's air_date and show's country and air_time.
+     * Note: If the first_aired is unknown, it will be set to null.
+     *
+     * https://trakt.docs.apiary.io/#reference/episodes/summary/get-a-single-episode-for-a-show
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @param int $episodeNumber
+     * @return array
+     */
+    public function episode(string $traktId, int $seasonNumber, int $episodeNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber?extended=full";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all cast and crew for an episode.
+     * Each cast member will have a characters array and a standard person object.
+     *
+     * https://trakt.docs.apiary.io/#reference/episodes/people/get-all-people-for-an-episode
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @param int $episodeNumber
+     * @return array
+     */
+    public function episodePeople(string $traktId, int $seasonNumber, int $episodeNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/people";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns rating (between 0 and 10) and distribution for an episode.
+     *
+     * https://trakt.docs.apiary.io/#reference/episodes/ratings/get-episode-ratings
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @param int $episodeNumber
+     * @return array
+     */
+    public function episodeRatings(string $traktId, int $seasonNumber, int $episodeNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/ratings";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns lots of episode stats.
+     *
+     * https://trakt.docs.apiary.io/#reference/episodes/stats/get-episode-stats
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @param int $episodeNumber
+     * @return array
+     */
+    public function episodeStats(string $traktId, int $seasonNumber, int $episodeNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/stats";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all users watching this episode right now.
+     *
+     * https://trakt.docs.apiary.io/#reference/episodes/watching/get-users-watching-right-now
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @param int $episodeNumber
+     * @return array
+     */
+    public function episodeWatching(string $traktId, int $seasonNumber, int $episodeNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/watching?extended=full";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
 }

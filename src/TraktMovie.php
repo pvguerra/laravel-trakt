@@ -39,11 +39,16 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/trending
      * @param ?string $filters
+     * @param int $page
+     * @param int $limit
      * @return array
      */
-    public function trending(?string $filters = null): array
+    public function trending(?string $filters = null, int $page = 1, int $limit = 10): array
     {
-        $uri = $this->apiUrl . "movies/trending?extended=full" . ($filters ? "&$filters" : "");
+        $uri = $this->apiUrl
+            . "movies/trending?extended=full"
+            . ($filters ? "&$filters" : "")
+            . "&page=$page&limit=$limit";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
@@ -54,11 +59,16 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/popular
      * @param ?string $filters
+     * @param int $page
+     * @param int $limit
      * @return array
      */
-    public function popular(?string $filters = null): array
+    public function popular(?string $filters = null, int $page = 1, int $limit = 10): array
     {
-        $uri = $this->apiUrl . "movies/popular?extended=full" . ($filters ? "&$filters" : "");
+        $uri = $this->apiUrl
+            . "movies/popular?extended=full"
+            . ($filters ? "&$filters" : "")
+            . "&page=$page&limit=$limit";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
@@ -70,11 +80,20 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/recommended
      * @param string $period
      * @param ?string $filters
+     * @param int $page
+     * @param int $limit
      * @return array
      */
-    public function recommended(string $period = 'weekly', ?string $filters = null): array
-    {
-        $uri = $this->apiUrl . "movies/recommended/$period?extended=full" . ($filters ? "&$filters" : "");
+    public function recommended(
+        string $period = 'weekly',
+        ?string $filters = null,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl
+            . "movies/recommended/$period?extended=full"
+            . ($filters ? "&$filters" : "")
+            . "&page=$page&limit=$limit";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
@@ -86,11 +105,20 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/played
      * @param string $period
      * @param ?string $filters
+     * @param int $page
+     * @param int $limit
      * @return array
      */
-    public function played(string $period = 'weekly', ?string $filters = null): array
-    {
-        $uri = $this->apiUrl . "movies/played/$period?extended=full" . ($filters ? "&$filters" : "");
+    public function played(
+        string $period = 'weekly',
+        ?string $filters = null,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl
+            . "movies/played/$period?extended=full"
+            . ($filters ? "&$filters" : "")
+            . "&page=$page&limit=$limit";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
@@ -102,11 +130,20 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/watched
      * @param string $period
      * @param ?string $filters
+     * @param int $page
+     * @param int $limit
      * @return array
      */
-    public function watched(string $period = 'weekly', ?string $filters = null): array
-    {
-        $uri = $this->apiUrl . "movies/watched/$period?extended=full" . ($filters ? "&$filters" : "");
+    public function watched(
+        string $period = 'weekly',
+        ?string $filters = null,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl
+            . "movies/watched/$period?extended=full"
+            . ($filters ? "&$filters" : "")
+            . "&page=$page&limit=$limit";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
@@ -118,11 +155,20 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/collected
      * @param string $period
      * @param ?string $filters
+     * @param int $page
+     * @param int $limit
      * @return array
      */
-    public function collected(string $period = 'weekly', ?string $filters = null): array
-    {
-        $uri = $this->apiUrl . "movies/collected/$period?extended=full" . ($filters ? "&$filters" : "");
+    public function collected(
+        string $period = 'weekly',
+        ?string $filters = null,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl
+            . "movies/collected/$period?extended=full"
+            . ($filters ? "&$filters" : "")
+            . "&page=$page&limit=$limit";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
@@ -132,11 +178,16 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/anticipated
      * @param ?string $filters
+     * @param int $page
+     * @param int $limit
      * @return array
      */
-    public function anticipated(?string $filters = null): array
+    public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): array
     {
-        $uri = $this->apiUrl . "movies/anticipated?extended=full" . ($filters ? "&$filters" : "");
+        $uri = $this->apiUrl
+            . "movies/anticipated?extended=full"
+            . ($filters ? "&$filters" : "")
+            . "&page=$page&limit=$limit";
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }

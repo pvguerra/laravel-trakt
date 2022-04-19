@@ -266,7 +266,7 @@ class TraktShow extends LaravelTrakt
         $uri = $this->apiUrl
             . "shows/$traktId/progress/collection?hidden=$hidden&specials=$specials&count_specials=$countSpecials";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
     }
 
     /**
@@ -288,7 +288,7 @@ class TraktShow extends LaravelTrakt
         $uri = $this->apiUrl
             . "shows/$traktId/progress/watched?hidden=$hidden&specials=$specials&count_specials=$countSpecials";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
     }
 
     /**

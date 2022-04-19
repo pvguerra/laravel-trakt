@@ -391,4 +391,94 @@ class TraktShow extends LaravelTrakt
 
         return Http::withHeaders($this->headers)->get($uri)->json();
     }
+
+    /**
+     * Returns all seasons for a show including the number of episodes in each season.
+     *
+     * https://trakt.docs.apiary.io/#reference/seasons/summary/get-all-seasons-for-a-show
+     * @param string $traktId
+     * @return array
+     */
+    public function seasons(string $traktId): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all episodes for a specific season of a show.
+     *
+     * https://trakt.docs.apiary.io/#reference/seasons/summary/get-single-season-for-a-show
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @return array
+     */
+    public function season(string $traktId, int $seasonNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all cast and crew for a season, including the episode_count for which they appear.
+     * Each cast member will have a characters array and a standard person object.
+     *
+     * https://trakt.docs.apiary.io/#reference/seasons/people/get-all-people-for-a-season
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @return array
+     */
+    public function seasonPeople(string $traktId, int $seasonNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/people?extended=full";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns rating (between 0 and 10) and distribution for a season.
+     *
+     * https://trakt.docs.apiary.io/#reference/seasons/ratings/get-season-ratings
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @return array
+     */
+    public function seasonRatings(string $traktId, int $seasonNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/ratings";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns lots of season stats.
+     *
+     * https://trakt.docs.apiary.io/#reference/seasons/stats/get-season-stats
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @return array
+     */
+    public function seasonStats(string $traktId, int $seasonNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/stats";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
+
+    /**
+     * Returns all users watching this season right now.
+     *
+     * https://trakt.docs.apiary.io/#reference/seasons/watching/get-users-watching-right-now
+     * @param string $traktId
+     * @param int $seasonNumber
+     * @return array
+     */
+    public function seasonWatching(string $traktId, int $seasonNumber): array
+    {
+        $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/watching?extended=full";
+
+        return Http::withHeaders($this->headers)->get($uri)->json();
+    }
 }

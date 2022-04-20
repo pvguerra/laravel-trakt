@@ -368,4 +368,204 @@ class TraktUser extends LaravelTrakt
 
         return Http::withHeaders($this->headers)->withToken($this->apiToken)->delete($uri);
     }
+
+    /**
+     * Returns all followers including when the relationship began.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/followers/get-followers
+     * @param string $traktId
+     * @return array
+     */
+    public function followers(string $traktId): array
+    {
+        $uri = $this->apiUrl . "users/$traktId/followers";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns all user's they follow including when the relationship began.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/following/get-following
+     * @param string $traktId
+     * @return array
+     */
+    public function following(string $traktId): array
+    {
+        $uri = $this->apiUrl . "users/$traktId/following";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns all friends for a user including when the relationship began.
+     * Friendship is a 2 way relationship where each user follows the other.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/friends/get-friends
+     * @param string $traktId
+     * @return array
+     */
+    public function friends(string $traktId): array
+    {
+        $uri = $this->apiUrl . "users/$traktId/friends";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns movies and episodes that a user has watched, sorted by most recent.
+     * You can optionally limit the type to movies or episodes.
+     * The id (64-bit integer) in each history item uniquely identifies the event and can be used
+     * to remove individual events by using the /sync/history/remove method.
+     * The action will be set to scrobble, checkin, or watch.Specify a type and trakt item_id to
+     * limit the history for just that item. If the item_id is valid, but there is no history,
+     * an empty array will be returned.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/history/get-watched-history
+     * @param string $traktId
+     * @param string $type
+     * @param int $itemId
+     * @param string $startAt
+     * @param string $endAt
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function history(
+        string $traktId,
+        string $type,
+        int $itemId,
+        string $startAt,
+        string $endAt,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl
+            . "users/$traktId/history/$type/$itemId?extended=full"
+            . "&start_at=$startAt&end_at=$endAt"
+            . "&page=$page&limit=$limit";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Get a user's ratings filtered by type.
+     * You can optionally filter for a specific rating between 1 and 10.
+     * Send a comma separated string for rating if you need multiple ratings.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/ratings/get-ratings
+     * @param string $traktId
+     * @param string $type
+     * @param ?int $rating
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function ratings(
+        string $traktId,
+        string $type,
+        ?int $rating = null,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl
+            . "users/$traktId/ratings/$type"
+            . ($rating ? "/$rating" : "")
+            . "?extended=full&page=$page&limit=$limit";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns all items in a user's watchlist filtered by type.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/watchlist/get-watchlist
+     * @param string $traktId
+     * @param string $type
+     * @param string $sort
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function watchlist(
+        string $traktId,
+        string $type,
+        string $sort,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl . "users/$traktId/watchlist/$type/$sort?extended=full&page=$page&limit=$limit";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns all items a user personally recommends to others including optional notes explaining
+     * why they recommended an item. These recommendations are used to enhance Trakt's social
+     * recommendation algorithm. Apps should encourage user's to build their personal recommendations
+     * so the algorithm keeps getting better.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/personal-recommendations/get-personal-recommendations
+     * @param string $traktId
+     * @param string $type
+     * @param string $sort
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function recommendations(
+        string $traktId,
+        string $type,
+        string $sort,
+        int $page = 1,
+        int $limit = 10
+    ): array {
+        $uri = $this->apiUrl . "users/$traktId/recommendations/$type/$sort?extended=full&page=$page&limit=$limit";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns a movie or episode if the user is currently watching something.
+     * If they are not, it returns no data and a 204 HTTP status code.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/watching/get-watching
+     * @param string $traktId
+     * @return array
+     */
+    public function watching(string $traktId): array
+    {
+        $uri = $this->apiUrl . "users/$traktId/watching";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns all movies or shows a user has watched sorted by most plays.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/watched/get-watched
+     * @param string $traktId
+     * @param string $type
+     * @return array
+     */
+    public function watched(string $traktId, string $type): array
+    {
+        $uri = $this->apiUrl . "users/$traktId/watched/$type";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
+
+    /**
+     * Returns stats about the movies, shows, and episodes a user has watched, collected, and rated.
+     *
+     * https://trakt.docs.apiary.io/#reference/users/stats/get-stats
+     * @param string $traktId
+     * @return array
+     */
+    public function stats(string $traktId): array
+    {
+        $uri = $this->apiUrl . "users/$traktId/stats";
+
+        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+    }
 }

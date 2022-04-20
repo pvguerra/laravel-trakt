@@ -3,10 +3,14 @@
 namespace Pvguerra\LaravelTrakt;
 
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
+use Pvguerra\LaravelTrakt\Traits\HttpResponses;
 
 class TraktUser extends LaravelTrakt
 {
+    use HttpResponses;
+
     /**
      * Get the user's settings, so you can align your app's experience with what they're used to on the trakt website.
      * A globally unique uuid is also returned, which can be used to identify the user locally in your app if needed.
@@ -276,44 +280,48 @@ class TraktUser extends LaravelTrakt
      * for multiple item types.
      *
      * https://trakt.docs.apiary.io/#reference/users/list-items/get-items-on-a-custom-list
-     * @param int $traktId
-     * @param string $type
+     * @param string $traktId
      * @param string $listId
-     * @return array
+     * @param string $type
+     * @return JsonResponse
      */
-    public function listItems(int $traktId, string $listId, string $type): array
+    public function listItems(string $traktId, string $listId, string $type): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId/items/$type";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::response($response);
     }
 
     /**
      * Add one or more items to a custom list. Items can be movies, shows, seasons, episodes, or people.
      *
      * https://trakt.docs.apiary.io/#reference/users/list-items/add-items-to-custom-list
-     * @param int $traktId
+     * @param string $traktId
      * @param string $listId
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function addItemToList(int $traktId, string $listId, array $data): Response
+    public function addItemToList(string $traktId, string $listId, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId/items";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+
+        return self::response($response);
     }
 
     /**
      * Remove one or more items from a custom list.
      *
      * https://trakt.docs.apiary.io/#reference/users/remove-list-items/remove-items-from-custom-list
-     * @param int $traktId
+     * @param string $traktId
      * @param string $listId
      * @param array $data
      * @return Response
      */
-    public function removeItemFromList(int $traktId, string $listId, array $data): Response
+    public function removeItemFromList(string $traktId, string $listId, array $data): Response
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId/items/remove";
 

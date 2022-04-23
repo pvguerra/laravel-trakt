@@ -2,22 +2,28 @@
 
 namespace Pvguerra\LaravelTrakt;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
+use Pvguerra\LaravelTrakt\Traits\HttpResponses;
 
 class TraktMovie extends LaravelTrakt
 {
+    use HttpResponses;
+
     /**
      * Returns a single movie's details.
      *
      * https://trakt.docs.apiary.io/#reference/movies/summary
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function get(string $traktId): array
+    public function get(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId?extended=full";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -25,13 +31,15 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/aliases
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function aliases(string $traktId): array
+    public function aliases(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/aliases";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -41,16 +49,18 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
-    public function trending(?string $filters = null, int $page = 1, int $limit = 10): array
+    public function trending(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl
             . "movies/trending?extended=full"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -61,16 +71,18 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
-    public function popular(?string $filters = null, int $page = 1, int $limit = 10): array
+    public function popular(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl
             . "movies/popular?extended=full"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -82,20 +94,22 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function recommended(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl
             . "movies/recommended/$period?extended=full"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -107,20 +121,22 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function played(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl
             . "movies/played/$period?extended=full"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -132,20 +148,22 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function watched(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl
             . "movies/watched/$period?extended=full"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -157,20 +175,22 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function collected(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl
             . "movies/collected/$period?extended=full"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -180,29 +200,33 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
-    public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): array
+    public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl
             . "movies/anticipated?extended=full"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
      * Returns the top 10 grossing movies in the U.S. box office last weekend. Updated every Monday morning.
      *
      * https://trakt.docs.apiary.io/#reference/movies/boxoffice
-     * @return array
+     * @return JsonResponse
      */
-    public function boxOffice(): array
+    public function boxOffice(): JsonResponse
     {
         $uri = $this->apiUrl . "movies/boxoffice?extended=full";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -214,13 +238,15 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/releases
      * @param string $traktId
      * @param string $country
-     * @return array
+     * @return JsonResponse
      */
-    public function releases(string $traktId, string $country = 'us'): array
+    public function releases(string $traktId, string $country = 'us'): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/releases/$country";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -229,13 +255,15 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/translations
      * @param string $traktId
      * @param string $language
-     * @return array
+     * @return JsonResponse
      */
-    public function translations(string $traktId, string $language = 'pt'): array
+    public function translations(string $traktId, string $language = 'pt'): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/translations/$language";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -247,7 +275,7 @@ class TraktMovie extends LaravelTrakt
      * @param string $sort
      * @param integer $page
      * @param integer $limit
-     * @return array
+     * @return JsonResponse
      */
     public function lists(
         string $traktId,
@@ -255,10 +283,12 @@ class TraktMovie extends LaravelTrakt
         string $sort = 'popular',
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl . "movies/$traktId/lists/$type/$sort?page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -270,13 +300,15 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/people
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function people(string $traktId): array
+    public function people(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/people?extended=full";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -284,13 +316,15 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/ratings
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function ratings(string $traktId): array
+    public function ratings(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/ratings";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -300,13 +334,15 @@ class TraktMovie extends LaravelTrakt
      * @param string $traktId
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
-    public function related(string $traktId, int $page = 1, int $limit = 10): array
+    public function related(string $traktId, int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/related?extended=full&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -314,13 +350,15 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/stats
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function stats(string $traktId): array
+    public function stats(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/stats";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -328,12 +366,14 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/watching
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function watching(string $traktId): array
+    public function watching(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/watching?extended=full";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 }

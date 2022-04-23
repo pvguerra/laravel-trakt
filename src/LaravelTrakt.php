@@ -9,7 +9,7 @@ class LaravelTrakt
 
     public function __construct(protected ?string $apiToken = null)
     {
-        $this->apiUrl = config('trakt.api_url');
-        $this->headers = config('trakt.headers');
+        $this->apiUrl = config('trakt.staging_api_url');
+        $this->headers = config('trakt.staging_headers');
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 trait HttpResponses
 {
-    protected static function response(Response $response): JsonResponse
+    protected static function httpResponse(Response $response): JsonResponse
     {
         return response()->json([
             'code' => $response->status(),

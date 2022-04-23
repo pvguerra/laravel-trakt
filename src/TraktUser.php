@@ -2,7 +2,6 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Pvguerra\LaravelTrakt\Traits\HttpResponses;
@@ -17,39 +16,45 @@ class TraktUser extends LaravelTrakt
      * However, the uuid can't be used to retrieve data from the Trakt API.
      *
      * https://trakt.docs.apiary.io/#reference/users/retrieve-settings
-     * @return array
+     * @return JsonResponse
      */
-    public function settings(): array
+    public function settings(): JsonResponse
     {
         $uri = $this->apiUrl . "users/settings";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
      * List a user's pending following requests that they're waiting for the other user's to approve.
      *
      * https://trakt.docs.apiary.io/#reference/users/following-requests
-     * @return array
+     * @return JsonResponse
      */
-    public function followingRequests(): array
+    public function followingRequests(): JsonResponse
     {
         $uri = $this->apiUrl . "users/requests/following";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
      * List a user's pending follow requests, so they can either approve or deny them.
      *
      * https://trakt.docs.apiary.io/#reference/users/requests
-     * @return array
+     * @return JsonResponse
      */
-    public function requests(): array
+    public function requests(): JsonResponse
     {
         $uri = $this->apiUrl . "users/requests";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -58,13 +63,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/approve-or-deny-follower-requests
      * @param int $requestId
-     * @return array
+     * @return JsonResponse
      */
-    public function approveRequest(int $requestId): array
+    public function approveRequest(int $requestId): JsonResponse
     {
         $uri = $this->apiUrl . "users/requests/$requestId";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -73,13 +80,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/approve-or-deny-follower-requests
      * @param int $requestId
-     * @return Response
+     * @return JsonResponse
      */
-    public function denyRequest(int $requestId): Response
+    public function denyRequest(int $requestId): JsonResponse
     {
         $uri = $this->apiUrl . "users/requests/$requestId";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->delete($uri);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->delete($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -91,13 +100,15 @@ class TraktUser extends LaravelTrakt
      * @param string $type
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
-    public function hiddenItems(string $section, string $type, int $page = 1, int $limit = 10): array
+    public function hiddenItems(string $section, string $type, int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl . "users/hidden/$section?type=$type?extended=full&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -106,13 +117,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/add-hidden-items
      * @param string $section
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function addHiddenItems(string $section, array $data): Response
+    public function addHiddenItems(string $section, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/hidden/$section";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -121,13 +134,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/remove-hidden-items
      * @param string $section
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function removeHiddenItems(string $section, array $data): Response
+    public function removeHiddenItems(string $section, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/hidden/$section/remove";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -138,13 +153,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/profile
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function profile(string $traktId): array
+    public function profile(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId?extended=vip";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -156,13 +173,15 @@ class TraktUser extends LaravelTrakt
      * @param string $type
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
-    public function likes(string $traktId, string $type = 'lists', int $page = 1, int $limit = 10): array
+    public function likes(string $traktId, string $type = 'lists', int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/likes/$type?page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -172,13 +191,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/collection
      * @param string $traktId
      * @param string $type
-     * @return array
+     * @return JsonResponse
      */
-    public function collection(string $traktId, string $type): array
+    public function collection(string $traktId, string $type): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/collection/$type?extended=metadata";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -187,13 +208,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/lists/get-a-user's-custom-lists
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function lists(string $traktId): array
+    public function lists(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -202,13 +225,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/lists/create-custom-list
      * @param string $traktId
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function createList(string $traktId, array $data): Response
+    public function createList(string $traktId, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -217,13 +242,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/reorder-lists/reorder-a-user's-lists
      * @param string $traktId
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function reorderLists(string $traktId, array $data): Response
+    public function reorderLists(string $traktId, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/reorder";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -233,13 +260,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/list/get-custom-list
      * @param string $traktId
      * @param string $listId
-     * @return array
+     * @return JsonResponse
      */
-    public function getList(string $traktId, string $listId): array
+    public function getList(string $traktId, string $listId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -250,13 +279,15 @@ class TraktUser extends LaravelTrakt
      * @param string $traktId
      * @param string $listId
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function updateList(string $traktId, string $listId, array $data): Response
+    public function updateList(string $traktId, string $listId, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->put($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->put($uri, $data);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -265,13 +296,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/list/delete-a-user's-custom-list
      * @param string $traktId
      * @param string $listId
-     * @return Response
+     * @return JsonResponse
      */
-    public function deleteList(string $traktId, string $listId): Response
+    public function deleteList(string $traktId, string $listId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->delete($uri);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->delete($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -291,7 +324,7 @@ class TraktUser extends LaravelTrakt
 
         $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
 
-        return self::response($response);
+        return self::httpResponse($response);
     }
 
     /**
@@ -309,7 +342,7 @@ class TraktUser extends LaravelTrakt
 
         $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
 
-        return self::response($response);
+        return self::httpResponse($response);
     }
 
     /**
@@ -319,13 +352,15 @@ class TraktUser extends LaravelTrakt
      * @param string $traktId
      * @param string $listId
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function removeItemFromList(string $traktId, string $listId, array $data): Response
+    public function removeItemFromList(string $traktId, string $listId, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId/items/remove";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -336,13 +371,15 @@ class TraktUser extends LaravelTrakt
      * @param string $traktId
      * @param string $listId
      * @param array $data
-     * @return Response
+     * @return JsonResponse
      */
-    public function reorderItemsOnList(string $traktId, string $listId, array $data): Response
+    public function reorderItemsOnList(string $traktId, string $listId, array $data): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/lists/$listId/items/reorder";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -352,13 +389,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/follow/follow-this-user
      * @param string $traktId
-     * @return Response
+     * @return JsonResponse
      */
-    public function follow(string $traktId): Response
+    public function follow(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/follow";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -368,13 +407,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/follow/unfollow-this-user
      * @param string $traktId
-     * @return Response
+     * @return JsonResponse
      */
-    public function unfollow(string $traktId): Response
+    public function unfollow(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/follow";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->delete($uri);
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->delete($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -382,13 +423,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/followers/get-followers
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function followers(string $traktId): array
+    public function followers(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/followers";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -396,13 +439,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/following/get-following
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function following(string $traktId): array
+    public function following(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/following";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -411,13 +456,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/friends/get-friends
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function friends(string $traktId): array
+    public function friends(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/friends";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -437,7 +484,7 @@ class TraktUser extends LaravelTrakt
      * @param string $endAt
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function history(
         string $traktId,
@@ -447,13 +494,15 @@ class TraktUser extends LaravelTrakt
         string $endAt,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl
             . "users/$traktId/history/$type/$itemId?extended=full"
             . "&start_at=$startAt&end_at=$endAt"
             . "&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -467,7 +516,7 @@ class TraktUser extends LaravelTrakt
      * @param ?int $rating
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function ratings(
         string $traktId,
@@ -475,13 +524,15 @@ class TraktUser extends LaravelTrakt
         ?int $rating = null,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl
             . "users/$traktId/ratings/$type"
             . ($rating ? "/$rating" : "")
             . "?extended=full&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -493,7 +544,7 @@ class TraktUser extends LaravelTrakt
      * @param string $sort
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function watchlist(
         string $traktId,
@@ -501,10 +552,12 @@ class TraktUser extends LaravelTrakt
         string $sort,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl . "users/$traktId/watchlist/$type/$sort?extended=full&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -519,7 +572,7 @@ class TraktUser extends LaravelTrakt
      * @param string $sort
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function recommendations(
         string $traktId,
@@ -527,10 +580,12 @@ class TraktUser extends LaravelTrakt
         string $sort,
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl . "users/$traktId/recommendations/$type/$sort?extended=full&page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -539,13 +594,15 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/watching/get-watching
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function watching(string $traktId): array
+    public function watching(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/watching";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -554,13 +611,15 @@ class TraktUser extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/users/watched/get-watched
      * @param string $traktId
      * @param string $type
-     * @return array
+     * @return JsonResponse
      */
-    public function watched(string $traktId, string $type): array
+    public function watched(string $traktId, string $type): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/watched/$type";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -568,12 +627,14 @@ class TraktUser extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/users/stats/get-stats
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function stats(string $traktId): array
+    public function stats(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "users/$traktId/stats";
 
-        return Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+
+        return self::httpResponse($response);
     }
 }

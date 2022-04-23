@@ -14,7 +14,7 @@ trait HttpResponses
             'success' => $response->successful(),
             'client_error' => $response->clientError(),
             'server_error' => $response->serverError(),
-            'data' => $response->json(),
+            'data' => $response,
         ], $response->status());
     }
 }

@@ -2,22 +2,28 @@
 
 namespace Pvguerra\LaravelTrakt;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
+use Pvguerra\LaravelTrakt\Traits\HttpResponses;
 
 class TraktPerson extends LaravelTrakt
 {
+    use HttpResponses;
+
     /**
      * Returns a single person's details.
      *
      * https://trakt.docs.apiary.io/#reference/people/summary
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function get(string $traktId): array
+    public function get(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "people/$traktId?extended=full";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -26,13 +32,15 @@ class TraktPerson extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/people/summary/get-movie-credits
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function getMovieCredits(string $traktId): array
+    public function getMovieCredits(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "people/$traktId/movies?extended=full";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -42,13 +50,15 @@ class TraktPerson extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/people/summary/get-show-credits
      * @param string $traktId
-     * @return array
+     * @return JsonResponse
      */
-    public function getShowCredits(string $traktId): array
+    public function getShowCredits(string $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "people/$traktId/shows?extended=full";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**
@@ -60,7 +70,7 @@ class TraktPerson extends LaravelTrakt
      * @param string $sort
      * @param int $page
      * @param int $limit
-     * @return array
+     * @return JsonResponse
      */
     public function lists(
         string $traktId,
@@ -68,9 +78,11 @@ class TraktPerson extends LaravelTrakt
         string $sort = 'popular',
         int $page = 1,
         int $limit = 10
-    ): array {
+    ): JsonResponse {
         $uri = $this->apiUrl . "people/$traktId/lists/$type/$sort?page=$page&limit=$limit";
 
-        return Http::withHeaders($this->headers)->get($uri)->json();
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 }

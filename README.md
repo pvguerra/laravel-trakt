@@ -26,30 +26,42 @@ You can install the package via composer:
 composer require pvguerra/laravel-trakt
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laravel-trakt-migrations"
-php artisan migrate
-```
-
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-trakt-config"
+php artisan vendor:publish --tag="trakt-config"
 ```
 
 This is the contents of the published config file:
 
 ```php
 return [
+    'api_url' => env('TRAKT_API_URL'),
+
+    'client_id' => env('TRAKT_CLIENT_ID'),
+
+    'client_secret' => env('TRAKT_CLIENT_SECRET'),
+
+    'headers' => [
+        'Content-type' => 'application/json',
+        'trakt-api-version' => env('TRAKT_API_VERSION', '2'),
+        'trakt-api-key' => env('TRAKT_CLIENT_ID'),
+    ],
+
+    'redirect_url' => env('TRAKT_REDIRECT_URL'),
+
+    'staging_api_url' => env('STAGING_TRAKT_API_URL'),
+
+    'staging_client_id' => env('STAGING_TRAKT_CLIENT_ID'),
+
+    'staging_client_secret' => env('STAGING_TRAKT_CLIENT_SECRET'),
+
+    'staging_headers' => [
+        'Content-type' => 'application/json',
+        'trakt-api-version' => env('TRAKT_API_VERSION', '2'),
+        'trakt-api-key' => env('STAGING_TRAKT_CLIENT_ID'),
+    ],
 ];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-trakt-views"
 ```
 
 ## Usage

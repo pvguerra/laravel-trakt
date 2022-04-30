@@ -16,7 +16,7 @@ class TraktCheckIn extends LaravelTrakt
      * then automatically switch to watched status once the duration has elapsed.
      *
      * https://trakt.docs.apiary.io/#reference/checkin/checkin/check-into-an-item
-     * @param array
+     * @param array $data
      * @return JsonResponse
      */
     public function checkIn(array $data): JsonResponse

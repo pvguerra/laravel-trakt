@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
+
 beforeEach(function () {
     $this->apiUrl = env('STAGING_TRAKT_API_URL') . 'movies/';
     $this->headers = [
@@ -10,5 +13,11 @@ beforeEach(function () {
 });
 
 it('can get a movie', function () {
-    $this->getJson($this->apiUrl . 'pulp-fiction-1994', $this->headers)->assertOk();
+    Http::fake();
+
+    Http::withHeaders($this->headers)->get($this->apiUrl . 'pulp-fiction-1994');
+
+    Http::assertSent(function (Request $request) {
+        return $request->hasHeader('trakt-api-kasdadey') ;
+    });
 });

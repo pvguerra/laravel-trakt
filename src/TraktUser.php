@@ -549,7 +549,7 @@ class TraktUser extends LaravelTrakt
     public function watchlist(
         string $traktId,
         string $type,
-        string $sort,
+        string $sort = 'rank',
         int $page = 1,
         int $limit = 10
     ): JsonResponse {
@@ -577,7 +577,7 @@ class TraktUser extends LaravelTrakt
     public function recommendations(
         string $traktId,
         string $type,
-        string $sort,
+        string $sort = 'rank',
         int $page = 1,
         int $limit = 10
     ): JsonResponse {

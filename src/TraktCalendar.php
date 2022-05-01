@@ -141,7 +141,7 @@ class TraktCalendar extends LaravelTrakt
     {
         $uri = $this->apiUrl . "calendars/all/movies/$startDate/$days?extended=full";
 
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
+        $response = Http::withHeaders($this->headers)->get($uri);
 
         return self::httpResponse($response);
     }

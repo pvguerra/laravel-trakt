@@ -11,13 +11,3 @@ beforeEach(function () {
         'trakt-api-key' => env('STAGING_TRAKT_CLIENT_ID'),
     ];
 });
-
-it('can get a movie', function () {
-    Http::fake();
-
-    Http::withHeaders($this->headers)->get($this->apiUrl . 'pulp-fiction-1994');
-
-    Http::assertSent(function (Request $request) {
-        return $request->hasHeader('trakt-api-kasdadey') ;
-    });
-});

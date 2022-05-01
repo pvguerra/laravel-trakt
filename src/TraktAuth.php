@@ -40,7 +40,7 @@ class TraktAuth extends LaravelTrakt
             "client_id" => $this->clientId,
             "client_secret" => $this->clientSecret,
             "redirect_uri" => $this->redirectUrl,
-            "grant_type" => "authorization_code"
+            "grant_type" => "authorization_code",
         ];
 
         return Http::post($this->apiUrl . "oauth/token", $data);
@@ -61,7 +61,7 @@ class TraktAuth extends LaravelTrakt
             "client_id" => $this->clientId,
             "client_secret" => $this->clientSecret,
             "redirect_uri" => $this->redirectUrl,
-            "grant_type" => "refresh_token"
+            "grant_type" => "refresh_token",
         ];
 
         return Http::post($this->apiUrl . "oauth/token", $data);

@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->apiUrl = env('STAGING_TRAKT_API_URL') . 'movies/';

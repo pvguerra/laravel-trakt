@@ -9,7 +9,7 @@ class TraktAuthDevice extends LaravelTrakt
     public function generateDeviceCodes()
     {
         $data = [
-            'client_id' => $this->clientId
+            'client_id' => $this->clientId,
         ];
 
         return Http::post($this->apiUrl . "oauth/device/code", $data);

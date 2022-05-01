@@ -257,8 +257,8 @@ class TraktShow extends LaravelTrakt
      * @param string $traktId
      * @param string $type
      * @param string $sort
-     * @param integer $page
-     * @param integer $limit
+     * @param int $page
+     * @param int $limit
      * @return JsonResponse
      */
     public function lists(

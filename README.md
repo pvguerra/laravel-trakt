@@ -66,7 +66,6 @@ Then you'll get all you need to fill the environment variables for configuration
 ```php
 use Pvguerra\LaravelTrakt\TraktMovie;
 
-# Example: Get a Movie 
 $traktMovie = new TraktMovie();
 
 return $traktMovie->get('the-batman-2022');
@@ -89,6 +88,31 @@ At this point I strongly recommend [Trakt Socialite Providers](https://socialite
 [Laravel Socialite](https://laravel.com/docs/9.x/socialite) and works flawlessly.
 
 Example:
+
+```php
+// web.php
+Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('trakt.auth');
+Route::get('auth/callback', [OAuthController::class, 'callback'])->name('trakt.callback');
+
+// authController.php
+use Laravel\Socialite\Facades\Socialite;
+
+// Redirecting the user to the OAuth provider.
+public function redirect()
+{
+    return Socialite::driver('trakt')->redirect();
+}
+
+// Receiving the callback from the provider after authentication.
+public function callback()
+{
+    $socialiteUser = Socialite::driver('trakt')->user();
+
+    //...
+}
+```
+
+Then with the authenticated user:
 
 ```php
 use Pvguerra\LaravelTrakt\TraktUser;

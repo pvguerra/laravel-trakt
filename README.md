@@ -8,15 +8,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/pvguerra/laravel-trakt/Check%20&%20fix%20styling?label=code%20style)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-trakt.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-trakt)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+The whole package was developed following the official [Trakt API Documentation](https://trakt.docs.apiary.io/).
 
 ## Installation
 
@@ -66,16 +58,51 @@ return [
 
 ## Usage
 
+If you don't have a Trakt client ID, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new).
+Then you'll get all you need to fill the environment variables for configuration.
+
+### Movies
+
 ```php
-$laravelTrakt = new Pvguerra\LaravelTrakt();
-echo $laravelTrakt->echoPhrase('Hello, Pvguerra!');
+use Pvguerra\LaravelTrakt\TraktMovie;
+
+# Example: Get a Movie 
+$traktMovie = new TraktMovie();
+
+return $traktMovie->get('the-batman-2022');
 ```
 
-## Testing
+### TV Shows
 
-```bash
-composer test
+```php
+use Pvguerra\LaravelTrakt\TraktShow;
+
+$traktShow = new TraktShow();
+
+return $traktShow->popular();
 ```
+
+### Auth Required
+
+Some endpoints are auth required, for these you'll need an API Token.
+At this point I strongly recommend [Trakt Socialite Providers](https://socialiteproviders.com/Trakt/#trakt) since it extends
+[Laravel Socialite](https://laravel.com/docs/9.x/socialite) and works flawlessly.
+
+Example:
+
+```php
+use Pvguerra\LaravelTrakt\TraktUser;
+
+$user = auth()->user();
+
+$traktUser = new TraktUser($user->token);
+
+return $traktUser->collection($user->trakt_id, 'movies');
+```
+
+## Documentation
+
+Full documentation will be available soon.
 
 ## Changelog
 
@@ -85,9 +112,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
 
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+Pull requests are welcome!
 
 ## Credits
 

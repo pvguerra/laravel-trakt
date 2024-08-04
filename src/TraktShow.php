@@ -443,11 +443,15 @@ class TraktShow extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/seasons/summary/get-all-seasons-for-a-show
      * @param string $traktId
+     * @param bool $includeEpisodes
      * @return JsonResponse
      */
-    public function seasons(string $traktId): JsonResponse
+    public function seasons(string $traktId, bool $includeEpisodes = false): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons";
+        if ($includeEpisodes) {
+            $uri .= '?extended=episodes';
+        }
 
         $response = Http::withHeaders($this->headers)->get($uri);
 

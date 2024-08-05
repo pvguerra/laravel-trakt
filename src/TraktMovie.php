@@ -21,7 +21,9 @@ class TraktMovie extends LaravelTrakt
     {
         $uri = $this->apiUrl . "movies/$traktId?extended=full";
 
-        return response()->json(Http::withHeaders($this->headers)->get($uri));
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
     }
 
     /**

@@ -450,7 +450,7 @@ class TraktShow extends LaravelTrakt
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons";
         if ($includeEpisodes) {
-            $uri .= '?extended=episodes';
+            $uri .= '?extended=episodes,full';
         }
 
         $response = Http::withHeaders($this->headers)->get($uri);

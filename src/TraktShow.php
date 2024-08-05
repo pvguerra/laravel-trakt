@@ -32,14 +32,15 @@ class TraktShow extends LaravelTrakt
     /**
      * Returns a single show's details based on the site and id.
      * The ID can be a Trakt, IMDB, TMDB, or TVDB ID.
+     * IMDB IDs must be provided as string due to zero padding of their IDs.
      *
      * https://trakt.docs.apiary.io/#reference/search/id-lookup
-     * @param int $id
+     * @param int|string $id
      * @param string $site
      * @return JsonResponse
      */
     // Get show by ID, can also be used to get a show by its TVDB, IMDB or TMDB ID.
-    public function getBySiteId(int $id, string $site): JsonResponse
+    public function getBySiteId(int|string $id, string $site): JsonResponse
     {
         $site = strtolower($site);
         $uri = $this->apiUrl . "search/$site/$id?type=show&extended=full";

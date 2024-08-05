@@ -17,12 +17,32 @@ class TraktShow extends LaravelTrakt
      * to whatever timezone your user is in.
      *
      * https://trakt.docs.apiary.io/#reference/shows/summary
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function get(string $traktId): JsonResponse
+    public function get(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId?extended=full";
+
+        $response = Http::withHeaders($this->headers)->get($uri);
+
+        return self::httpResponse($response);
+    }
+
+    /**
+     * Returns a single show's details based on the site and id.
+     * The ID can be a Trakt, IMDB, TMDB, or TVDB ID.
+     *
+     * https://trakt.docs.apiary.io/#reference/search/id-lookup
+     * @param int $id
+     * @param string $site
+     * @return JsonResponse
+     */
+    // Get show by ID, can also be used to get a show by its TVDB, IMDB or TMDB ID.
+    public function getBySiteId(int $id, string $site): JsonResponse
+    {
+        $site = strtolower($site);
+        $uri = $this->apiUrl . "search/$site/$id?type=show&extended=full";
 
         $response = Http::withHeaders($this->headers)->get($uri);
 
@@ -33,10 +53,10 @@ class TraktShow extends LaravelTrakt
      * Returns all title aliases for a show. Includes country where name is different.
      *
      * https://trakt.docs.apiary.io/#reference/shows/aliases
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function aliases(string $traktId): JsonResponse
+    public function aliases(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/aliases";
 
@@ -221,10 +241,10 @@ class TraktShow extends LaravelTrakt
      * Returns all content certifications for a show, including the country.
      *
      * https://trakt.docs.apiary.io/#reference/shows/certifications
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function certifications(string $traktId): JsonResponse
+    public function certifications(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/certifications";
 
@@ -237,11 +257,11 @@ class TraktShow extends LaravelTrakt
      * Returns all translations for a show, including language and translated values for title, tagline and overview.
      *
      * https://trakt.docs.apiary.io/#reference/shows/translations
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $language
      * @return JsonResponse
      */
-    public function translations(string $traktId, string $language = 'pt'): JsonResponse
+    public function translations(string|int $traktId, string $language = 'pt'): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/translations/$language";
 
@@ -254,7 +274,7 @@ class TraktShow extends LaravelTrakt
      * Returns all lists that contain this show. By default, personal lists are returned sorted by the most popular.
      *
      * https://trakt.docs.apiary.io/#reference/shows/lists
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $type
      * @param string $sort
      * @param int $page
@@ -262,7 +282,7 @@ class TraktShow extends LaravelTrakt
      * @return JsonResponse
      */
     public function lists(
-        string $traktId,
+        string|int $traktId,
         string $type = 'personal',
         string $sort = 'popular',
         int $page = 1,
@@ -279,14 +299,14 @@ class TraktShow extends LaravelTrakt
      * Returns collection progress for a show including details on all aired seasons and episodes.
      *
      * https://trakt.docs.apiary.io/#reference/shows/collection-progress
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $hidden
      * @param string $specials
      * @param string $countSpecials
      * @return JsonResponse
      */
     public function collectionProgress(
-        string $traktId,
+        string|int $traktId,
         string $hidden = 'false',
         string $specials = 'false',
         string $countSpecials = 'true'
@@ -303,14 +323,14 @@ class TraktShow extends LaravelTrakt
      * Returns watched progress for a show including details on all aired seasons and episodes.
      *
      * https://trakt.docs.apiary.io/#reference/shows/watched-progress
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $hidden
      * @param string $specials
      * @param string $countSpecials
      * @return JsonResponse
      */
     public function watchedProgress(
-        string $traktId,
+        string|int $traktId,
         string $hidden = 'false',
         string $specials = 'false',
         string $countSpecials = 'true'
@@ -328,10 +348,10 @@ class TraktShow extends LaravelTrakt
      * Each cast member will have a characters array and a standard person object.
      *
      * https://trakt.docs.apiary.io/#reference/shows/people
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function people(string $traktId): JsonResponse
+    public function people(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/people?extended=full";
 
@@ -344,10 +364,10 @@ class TraktShow extends LaravelTrakt
      * Returns rating (between 0 and 10) and distribution for a show.
      *
      * https://trakt.docs.apiary.io/#reference/shows/ratings
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function ratings(string $traktId): JsonResponse
+    public function ratings(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/ratings";
 
@@ -360,12 +380,12 @@ class TraktShow extends LaravelTrakt
      * Returns related and similar shows.
      *
      * https://trakt.docs.apiary.io/#reference/shows/related
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $page
      * @param int $limit
      * @return JsonResponse
      */
-    public function related(string $traktId, int $page = 1, int $limit = 10): JsonResponse
+    public function related(string|int $traktId, int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/related?extended=full&page=$page&limit=$limit";
 
@@ -378,10 +398,10 @@ class TraktShow extends LaravelTrakt
      * Returns lots of show stats.
      *
      * https://trakt.docs.apiary.io/#reference/shows/stats
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function stats(string $traktId): JsonResponse
+    public function stats(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/stats";
 
@@ -394,10 +414,10 @@ class TraktShow extends LaravelTrakt
      * Returns all users watching this show right now.
      *
      * https://trakt.docs.apiary.io/#reference/shows/watching
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function watching(string $traktId): JsonResponse
+    public function watching(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/watching?extended=full";
 
@@ -410,10 +430,10 @@ class TraktShow extends LaravelTrakt
      * Returns the next scheduled to air episode. If no episode is found, a 204 HTTP status code will be returned.
      *
      * https://trakt.docs.apiary.io/#reference/shows/next-episode
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function nextEpisode(string $traktId): JsonResponse
+    public function nextEpisode(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/next_episode?extended=full";
 
@@ -426,10 +446,10 @@ class TraktShow extends LaravelTrakt
      * Returns the most recently aired episode. If no episode is found, a 204 HTTP status code will be returned.
      *
      * https://trakt.docs.apiary.io/#reference/shows/last-episode
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function lastEpisode(string $traktId): JsonResponse
+    public function lastEpisode(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/last_episode?extended=full";
 
@@ -442,11 +462,11 @@ class TraktShow extends LaravelTrakt
      * Returns all seasons for a show including the number of episodes in each season.
      *
      * https://trakt.docs.apiary.io/#reference/seasons/summary/get-all-seasons-for-a-show
-     * @param string $traktId
+     * @param string|int $traktId
      * @param bool $includeEpisodes
      * @return JsonResponse
      */
-    public function seasons(string $traktId, bool $includeEpisodes = false): JsonResponse
+    public function seasons(string|int $traktId, bool $includeEpisodes = false): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons";
         if ($includeEpisodes) {
@@ -462,11 +482,11 @@ class TraktShow extends LaravelTrakt
      * Returns all episodes for a specific season of a show.
      *
      * https://trakt.docs.apiary.io/#reference/seasons/summary/get-single-season-for-a-show
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @return JsonResponse
      */
-    public function season(string $traktId, int $seasonNumber): JsonResponse
+    public function season(string|int $traktId, int $seasonNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber";
 
@@ -480,11 +500,11 @@ class TraktShow extends LaravelTrakt
      * Each cast member will have a characters array and a standard person object.
      *
      * https://trakt.docs.apiary.io/#reference/seasons/people/get-all-people-for-a-season
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @return JsonResponse
      */
-    public function seasonPeople(string $traktId, int $seasonNumber): JsonResponse
+    public function seasonPeople(string|int $traktId, int $seasonNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/people?extended=full";
 
@@ -497,11 +517,11 @@ class TraktShow extends LaravelTrakt
      * Returns rating (between 0 and 10) and distribution for a season.
      *
      * https://trakt.docs.apiary.io/#reference/seasons/ratings/get-season-ratings
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @return JsonResponse
      */
-    public function seasonRatings(string $traktId, int $seasonNumber): JsonResponse
+    public function seasonRatings(string|int $traktId, int $seasonNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/ratings";
 
@@ -514,11 +534,11 @@ class TraktShow extends LaravelTrakt
      * Returns lots of season stats.
      *
      * https://trakt.docs.apiary.io/#reference/seasons/stats/get-season-stats
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @return JsonResponse
      */
-    public function seasonStats(string $traktId, int $seasonNumber): JsonResponse
+    public function seasonStats(string|int $traktId, int $seasonNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/stats";
 
@@ -531,11 +551,11 @@ class TraktShow extends LaravelTrakt
      * Returns all users watching this season right now.
      *
      * https://trakt.docs.apiary.io/#reference/seasons/watching/get-users-watching-right-now
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @return JsonResponse
      */
-    public function seasonWatching(string $traktId, int $seasonNumber): JsonResponse
+    public function seasonWatching(string|int $traktId, int $seasonNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/watching?extended=full";
 
@@ -550,12 +570,12 @@ class TraktShow extends LaravelTrakt
      * Note: If the first_aired is unknown, it will be set to null.
      *
      * https://trakt.docs.apiary.io/#reference/episodes/summary/get-a-single-episode-for-a-show
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @param int $episodeNumber
      * @return JsonResponse
      */
-    public function episode(string $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
+    public function episode(string|int $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber?extended=full";
 
@@ -569,12 +589,12 @@ class TraktShow extends LaravelTrakt
      * Each cast member will have a characters array and a standard person object.
      *
      * https://trakt.docs.apiary.io/#reference/episodes/people/get-all-people-for-an-episode
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @param int $episodeNumber
      * @return JsonResponse
      */
-    public function episodePeople(string $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
+    public function episodePeople(string|int $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/people";
 
@@ -587,12 +607,12 @@ class TraktShow extends LaravelTrakt
      * Returns rating (between 0 and 10) and distribution for an episode.
      *
      * https://trakt.docs.apiary.io/#reference/episodes/ratings/get-episode-ratings
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @param int $episodeNumber
      * @return JsonResponse
      */
-    public function episodeRatings(string $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
+    public function episodeRatings(string|int $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/ratings";
 
@@ -605,12 +625,12 @@ class TraktShow extends LaravelTrakt
      * Returns lots of episode stats.
      *
      * https://trakt.docs.apiary.io/#reference/episodes/stats/get-episode-stats
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @param int $episodeNumber
      * @return JsonResponse
      */
-    public function episodeStats(string $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
+    public function episodeStats(string|int $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/stats";
 
@@ -623,12 +643,12 @@ class TraktShow extends LaravelTrakt
      * Returns all users watching this episode right now.
      *
      * https://trakt.docs.apiary.io/#reference/episodes/watching/get-users-watching-right-now
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $seasonNumber
      * @param int $episodeNumber
      * @return JsonResponse
      */
-    public function episodeWatching(string $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
+    public function episodeWatching(string|int $traktId, int $seasonNumber, int $episodeNumber): JsonResponse
     {
         $uri = $this->apiUrl . "shows/$traktId/seasons/$seasonNumber/episodes/$episodeNumber/watching?extended=full";
 

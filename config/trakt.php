@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'api_url' => env('TRAKT_API_URL'),
+    'api_url' => env('TRAKT_API_URL', 'https://api.trakt.tv'),
 
     'client_id' => env('TRAKT_CLIENT_ID'),
 
-    'client_secret' => env('TRAKT_CLIENT_SECRET'),
+    'client_secret' => env('TRAKT_CLIENT_SECRET', ''),
 
     'headers' => [
         'Content-type' => 'application/json',
@@ -13,7 +13,7 @@ return [
         'trakt-api-key' => env('TRAKT_CLIENT_ID'),
     ],
 
-    'redirect_url' => env('TRAKT_REDIRECT_URL'),
+    'redirect_url' => env('TRAKT_REDIRECT_URL', ''),
 
     'staging_api_url' => env('STAGING_TRAKT_API_URL'),
 

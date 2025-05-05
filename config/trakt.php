@@ -8,7 +8,8 @@ return [
     'client_secret' => env('TRAKT_CLIENT_SECRET'),
 
     'headers' => [
-        'Content-type' => 'application/json',
+        'Content-Type' => 'application/json',
+        'User-Agent' => env('APP_NAME') . '/' . env('APP_VERSION'),
         'trakt-api-version' => env('TRAKT_API_VERSION', '2'),
         'trakt-api-key' => env('TRAKT_CLIENT_ID'),
     ],
@@ -22,7 +23,8 @@ return [
     'staging_client_secret' => env('STAGING_TRAKT_CLIENT_SECRET'),
 
     'staging_headers' => [
-        'Content-type' => 'application/json',
+        'Content-Type' => 'application/json',
+        'User-Agent' => env('APP_NAME') . '/' . env('APP_VERSION'),
         'trakt-api-version' => env('TRAKT_API_VERSION', '2'),
         'trakt-api-key' => env('STAGING_TRAKT_CLIENT_ID'),
     ],

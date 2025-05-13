@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'api_url' => env('TRAKT_API_URL'),
+    'api_url' => env('TRAKT_API_URL', 'https://api.trakt.tv/'),
 
     'client_id' => env('TRAKT_CLIENT_ID'),
 
@@ -16,7 +16,7 @@ return [
 
     'redirect_url' => env('TRAKT_REDIRECT_URL'),
 
-    'staging_api_url' => env('STAGING_TRAKT_API_URL'),
+    'staging_api_url' => env('STAGING_TRAKT_API_URL', 'https://api-staging.trakt.tv/'),
 
     'staging_client_id' => env('STAGING_TRAKT_CLIENT_ID'),
 

@@ -14,10 +14,10 @@ class TraktMovie extends LaravelTrakt
      * Returns a single movie's details.
      *
      * https://trakt.docs.apiary.io/#reference/movies/summary
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function get(string $traktId): JsonResponse
+    public function get(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId?extended=full";
 
@@ -28,10 +28,10 @@ class TraktMovie extends LaravelTrakt
      * Returns all title aliases for a movie. Includes country where name is different.
      *
      * https://trakt.docs.apiary.io/#reference/movies/aliases
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function aliases(string $traktId): JsonResponse
+    public function aliases(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/aliases";
 
@@ -232,11 +232,11 @@ class TraktMovie extends LaravelTrakt
      * for a physical release. We pull this info from TMDB.
      *
      * https://trakt.docs.apiary.io/#reference/movies/releases
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $country
      * @return JsonResponse
      */
-    public function releases(string $traktId, string $country = 'us'): JsonResponse
+    public function releases(string|int $traktId, string $country = 'us'): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/releases/$country";
 
@@ -249,11 +249,11 @@ class TraktMovie extends LaravelTrakt
      * Returns all translations for a movie, including language and translated values for title, tagline and overview.
      *
      * https://trakt.docs.apiary.io/#reference/movies/translations
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $language
      * @return JsonResponse
      */
-    public function translations(string $traktId, string $language = 'pt'): JsonResponse
+    public function translations(string|int $traktId, string $language = 'pt'): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/translations/$language";
 
@@ -266,7 +266,7 @@ class TraktMovie extends LaravelTrakt
      * Returns all lists that contain this movie. By default, personal lists are returned sorted by the most popular.
      *
      * https://trakt.docs.apiary.io/#reference/movies/lists
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $type
      * @param string $sort
      * @param int $page
@@ -274,7 +274,7 @@ class TraktMovie extends LaravelTrakt
      * @return JsonResponse
      */
     public function lists(
-        string $traktId,
+        string|int $traktId,
         string $type = 'personal',
         string $sort = 'popular',
         int $page = 1,
@@ -295,10 +295,10 @@ class TraktMovie extends LaravelTrakt
      * for those crew positions). Each of those members will have a jobs array and a standard person object.
      *
      * https://trakt.docs.apiary.io/#reference/movies/people
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function people(string $traktId): JsonResponse
+    public function people(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/people?extended=full";
 
@@ -311,10 +311,10 @@ class TraktMovie extends LaravelTrakt
      * Returns rating (between 0 and 10) and distribution for a movie.
      *
      * https://trakt.docs.apiary.io/#reference/movies/ratings
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function ratings(string $traktId): JsonResponse
+    public function ratings(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/ratings";
 
@@ -327,12 +327,12 @@ class TraktMovie extends LaravelTrakt
      * Returns related and similar movies.
      *
      * https://trakt.docs.apiary.io/#reference/movies/related
-     * @param string $traktId
+     * @param string|int $traktId
      * @param int $page
      * @param int $limit
      * @return JsonResponse
      */
-    public function related(string $traktId, int $page = 1, int $limit = 10): JsonResponse
+    public function related(string|int $traktId, int $page = 1, int $limit = 10): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/related?extended=full&page=$page&limit=$limit";
 
@@ -345,10 +345,10 @@ class TraktMovie extends LaravelTrakt
      * Returns lots of movie stats.
      *
      * https://trakt.docs.apiary.io/#reference/movies/stats
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function stats(string $traktId): JsonResponse
+    public function stats(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/stats";
 
@@ -361,10 +361,10 @@ class TraktMovie extends LaravelTrakt
      * Returns all users watching this movie right now.
      *
      * https://trakt.docs.apiary.io/#reference/movies/watching
-     * @param string $traktId
+     * @param string|int $traktId
      * @return JsonResponse
      */
-    public function watching(string $traktId): JsonResponse
+    public function watching(string|int $traktId): JsonResponse
     {
         $uri = $this->apiUrl . "movies/$traktId/watching?extended=full";
 

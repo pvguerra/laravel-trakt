@@ -2,6 +2,8 @@
 
 namespace Pvguerra\LaravelTrakt;
 
+use Exception;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Pvguerra\LaravelTrakt\Traits\HttpResponses;
@@ -16,12 +18,22 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/summary
      * @param string|int $traktId
      * @return JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function get(string|int $traktId): JsonResponse
+    public function get(string|int $traktId, bool $extended = false, ?string $level = 'full'): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId?extended=full";
+        try {
+            $extendedInfo = $extended ? "?extended={$level}" : null;
 
-        return response()->json(Http::withHeaders($this->headers)->get($uri));
+            $response = $this->client->get("movies/{$traktId}{$extendedInfo}")->throw()->json();
+
+            return $response;
+        } catch (ConnectionException $e) {
+            throw new ConnectionException($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**
@@ -30,35 +42,57 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/aliases
      * @param string|int $traktId
      * @return JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function aliases(string|int $traktId): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/aliases";
+        try {
+            $response = $this->client->get("movies/{$traktId}/aliases")->throw()->json();
 
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+            return $response;
+        } catch (ConnectionException $e) {
+            throw new ConnectionException($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**
      * Returns all movies being watched right now. Movies with the most users are returned first.
      *
      * https://trakt.docs.apiary.io/#reference/movies/trending
-     * @param ?string $filters
      * @param int $page
      * @param int $limit
+     * @param bool $extended
+     * @param ?string $level
+     * @param ?string $filters
      * @return JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function trending(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
-    {
-        $uri = $this->apiUrl
-            . "movies/trending?extended=full"
+    public function trending(
+        int $page = 1,
+        int $limit = 10,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): JsonResponse {
+        $extendedInfo = $extended ? "?extended={$level}" : null;
+
+        $uri = "movies/trending{$extendedInfo}"
             . ($filters ? "&$filters" : "")
             . "&page=$page&limit=$limit";
 
-        $response = Http::withHeaders($this->headers)->get($uri);
+        try {
+            $response = $this->client->get($uri)->throw()->json();
 
-        return self::httpResponse($response);
+            return $response;
+        } catch (ConnectionException $e) {
+            throw new ConnectionException($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
     }
 
     /**

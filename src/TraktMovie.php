@@ -5,12 +5,54 @@ namespace Pvguerra\LaravelTrakt;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
 
 class TraktMovie extends LaravelTrakt
 {
-    use HttpResponses;
+    /**
+     * Build query string from parameters array
+     *
+     * @param array $params
+     * @return string
+     */
+    private function buildQueryString(array $params): string
+    {
+        return count($params) > 0 ? '?' . implode('&', $params) : '';
+    }
+    
+    /**
+     * Build pagination parameters
+     *
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    private function buildPaginationParams(int $page, int $limit): array
+    {
+        $params = [];
+        $params[] = "page={$page}";
+        $params[] = "limit={$limit}";
+        return $params;
+    }
+    
+    /**
+     * Make API request and handle exceptions
+     *
+     * @param string $uri
+     * @return JsonResponse
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    private function makeRequest(string $uri): JsonResponse
+    {
+        try {
+            $response = $this->client->get($uri)->throw()->json();
+            return $response;
+        } catch (ConnectionException $e) {
+            throw new ConnectionException($e->getMessage(), $e->getCode(), $e);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
 
     /**
      * Returns a single movie's details.
@@ -23,17 +65,14 @@ class TraktMovie extends LaravelTrakt
      */
     public function get(string|int $traktId, bool $extended = false, ?string $level = 'full'): JsonResponse
     {
-        try {
-            $extendedInfo = $extended ? "?extended={$level}" : null;
+        $params = [];
 
-            $response = $this->client->get("movies/{$traktId}{$extendedInfo}")->throw()->json();
-
-            return $response;
-        } catch (ConnectionException $e) {
-            throw new ConnectionException($e->getMessage());
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+        if ($extended && $level) {
+            $params[] = "extended={$level}";
         }
+
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/{$traktId}{$queryString}");
     }
 
     /**
@@ -47,15 +86,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function aliases(string|int $traktId): JsonResponse
     {
-        try {
-            $response = $this->client->get("movies/{$traktId}/aliases")->throw()->json();
-
-            return $response;
-        } catch (ConnectionException $e) {
-            throw new ConnectionException($e->getMessage());
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
+        return $this->makeRequest("movies/{$traktId}/aliases");
     }
 
     /**
@@ -77,22 +108,20 @@ class TraktMovie extends LaravelTrakt
         bool $extended = false,
         ?string $level = 'full',
         ?string $filters = null
-    ): JsonResponse {
-        $extendedInfo = $extended ? "?extended={$level}" : null;
+    ): JsonResponse
+    {
+        $params = $this->buildPaginationParams($page, $limit);
 
-        $uri = "movies/trending{$extendedInfo}"
-            . ($filters ? "&$filters" : "")
-            . "&page=$page&limit=$limit";
-
-        try {
-            $response = $this->client->get($uri)->throw()->json();
-
-            return $response;
-        } catch (ConnectionException $e) {
-            throw new ConnectionException($e->getMessage());
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+        if ($extended && $level) {
+            $params[] = "extended={$level}";
         }
+
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/trending{$queryString}");
     }
 
     /**
@@ -107,14 +136,14 @@ class TraktMovie extends LaravelTrakt
      */
     public function popular(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
     {
-        $uri = $this->apiUrl
-            . "movies/popular?extended=full"
-            . ($filters ? "&$filters" : "")
-            . "&page=$page&limit=$limit";
+        $params = $this->buildPaginationParams($page, $limit);
 
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/popular{$queryString}");
     }
 
     /**
@@ -133,15 +162,16 @@ class TraktMovie extends LaravelTrakt
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl
-            . "movies/recommended/$period?extended=full"
-            . ($filters ? "&$filters" : "")
-            . "&page=$page&limit=$limit";
+    ): JsonResponse
+    {
+        $params = $this->buildPaginationParams($page, $limit);
 
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/recommended/{$period}{$queryString}");
     }
 
     /**
@@ -160,15 +190,16 @@ class TraktMovie extends LaravelTrakt
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl
-            . "movies/played/$period?extended=full"
-            . ($filters ? "&$filters" : "")
-            . "&page=$page&limit=$limit";
+    ): JsonResponse
+    {
+        $params = $this->buildPaginationParams($page, $limit);
 
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/played/{$period}{$queryString}");
     }
 
     /**
@@ -187,15 +218,16 @@ class TraktMovie extends LaravelTrakt
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl
-            . "movies/watched/$period?extended=full"
-            . ($filters ? "&$filters" : "")
-            . "&page=$page&limit=$limit";
+    ): JsonResponse
+    {
+        $params = $this->buildPaginationParams($page, $limit);
 
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/watched/{$period}{$queryString}");
     }
 
     /**
@@ -214,15 +246,16 @@ class TraktMovie extends LaravelTrakt
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl
-            . "movies/collected/$period?extended=full"
-            . ($filters ? "&$filters" : "")
-            . "&page=$page&limit=$limit";
+    ): JsonResponse
+    {
+        $params = $this->buildPaginationParams($page, $limit);
 
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/collected/{$period}{$queryString}");
     }
 
     /**
@@ -236,12 +269,14 @@ class TraktMovie extends LaravelTrakt
      */
     public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
     {
-        $uri = $this->apiUrl
-            . "movies/anticipated?extended=full"
-            . ($filters ? "&$filters" : "")
-            . "&page=$page&limit=$limit";
+        $params = $this->buildPaginationParams($page, $limit);
 
-        return response()->json(Http::withHeaders($this->headers)->get($uri));
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/anticipated{$queryString}");
     }
 
     /**
@@ -252,11 +287,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function boxOffice(): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/boxoffice?extended=full";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->makeRequest("movies/boxoffice");
     }
 
     /**
@@ -272,11 +303,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function releases(string|int $traktId, string $country = 'us'): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/releases/$country";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->makeRequest("movies/{$traktId}/releases/{$country}");
     }
 
     /**
@@ -289,11 +316,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function translations(string|int $traktId, string $language = 'pt'): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/translations/$language";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->makeRequest("movies/{$traktId}/translations/{$language}");
     }
 
     /**
@@ -313,12 +336,12 @@ class TraktMovie extends LaravelTrakt
         string $sort = 'popular',
         int $page = 1,
         int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl . "movies/$traktId/lists/$type/$sort?page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+    ): JsonResponse
+    {
+        $params = $this->buildPaginationParams($page, $limit);
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/{$traktId}/lists/{$type}/{$sort}{$queryString}");
     }
 
     /**
@@ -330,15 +353,22 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/people
      * @param string|int $traktId
+     * @param bool $extended
+     * @param string|null $level
      * @return JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function people(string|int $traktId): JsonResponse
+    public function people(string|int $traktId, bool $extended = true, ?string $level = 'full'): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/people?extended=full";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        $params = [];
+        
+        if ($extended && $level) {
+            $params[] = "extended={$level}";
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/{$traktId}/people{$queryString}");
     }
 
     /**
@@ -350,11 +380,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function ratings(string|int $traktId): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/ratings";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->makeRequest("movies/{$traktId}/ratings");
     }
 
     /**
@@ -364,15 +390,22 @@ class TraktMovie extends LaravelTrakt
      * @param string|int $traktId
      * @param int $page
      * @param int $limit
+     * @param bool $extended
+     * @param string|null $level
      * @return JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function related(string|int $traktId, int $page = 1, int $limit = 10): JsonResponse
+    public function related(string|int $traktId, int $page = 1, int $limit = 10, bool $extended = true, ?string $level = 'full'): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/related?extended=full&page=$page&limit=$limit";
+        $params = $this->buildPaginationParams($page, $limit);
 
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        if ($extended && $level) {
+            $params[] = "extended={$level}";
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/{$traktId}/related{$queryString}");
     }
 
     /**
@@ -384,11 +417,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function stats(string|int $traktId): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/stats";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->makeRequest("movies/{$traktId}/stats");
     }
 
     /**
@@ -396,14 +425,21 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/watching
      * @param string|int $traktId
+     * @param bool $extended
+     * @param string|null $level
      * @return JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function watching(string|int $traktId): JsonResponse
+    public function watching(string|int $traktId, bool $extended = true, ?string $level = 'full'): JsonResponse
     {
-        $uri = $this->apiUrl . "movies/$traktId/watching?extended=full";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        $params = [];
+        
+        if ($extended && $level) {
+            $params[] = "extended={$level}";
+        }
+        
+        $queryString = $this->buildQueryString($params);
+        return $this->makeRequest("movies/{$traktId}/watching{$queryString}");
     }
 }

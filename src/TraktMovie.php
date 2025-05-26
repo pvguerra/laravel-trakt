@@ -4,7 +4,6 @@ namespace Pvguerra\LaravelTrakt;
 
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\JsonResponse;
 
 class TraktMovie extends LaravelTrakt
 {
@@ -38,11 +37,11 @@ class TraktMovie extends LaravelTrakt
      * Make API request and handle exceptions
      *
      * @param string $uri
-     * @return JsonResponse
+     * @return array
      * @throws ConnectionException
      * @throws Exception
      */
-    private function makeRequest(string $uri): JsonResponse
+    private function makeRequest(string $uri): array
     {
         try {
             $response = $this->client->get($uri)->throw()->json();
@@ -59,11 +58,11 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/summary
      * @param string|int $traktId
-     * @return JsonResponse
+     * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function get(string|int $traktId, bool $extended = false, ?string $level = 'full'): JsonResponse
+    public function get(string|int $traktId, bool $extended = false, ?string $level = 'full'): array
     {
         $params = [];
 
@@ -80,11 +79,11 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/aliases
      * @param string|int $traktId
-     * @return JsonResponse
+     * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function aliases(string|int $traktId): JsonResponse
+    public function aliases(string|int $traktId): array
     {
         return $this->makeRequest("movies/{$traktId}/aliases");
     }
@@ -98,7 +97,7 @@ class TraktMovie extends LaravelTrakt
      * @param bool $extended
      * @param ?string $level
      * @param ?string $filters
-     * @return JsonResponse
+     * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
@@ -108,7 +107,7 @@ class TraktMovie extends LaravelTrakt
         bool $extended = false,
         ?string $level = 'full',
         ?string $filters = null
-    ): JsonResponse
+    ): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -132,9 +131,9 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
-    public function popular(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
+    public function popular(?string $filters = null, int $page = 1, int $limit = 10): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -155,14 +154,14 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
     public function recommended(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse
+    ): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -183,14 +182,14 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
     public function played(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse
+    ): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -211,14 +210,14 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
     public function watched(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse
+    ): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -239,14 +238,14 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
     public function collected(
         string $period = 'weekly',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse
+    ): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -265,9 +264,9 @@ class TraktMovie extends LaravelTrakt
      * @param ?string $filters
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
-    public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): JsonResponse
+    public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -283,9 +282,9 @@ class TraktMovie extends LaravelTrakt
      * Returns the top 10 grossing movies in the U.S. box office last weekend. Updated every Monday morning.
      *
      * https://trakt.docs.apiary.io/#reference/movies/boxoffice
-     * @return JsonResponse
+     * @return array
      */
-    public function boxOffice(): JsonResponse
+    public function boxOffice(): array
     {
         return $this->makeRequest("movies/boxoffice");
     }
@@ -299,9 +298,9 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/releases
      * @param string|int $traktId
      * @param string $country
-     * @return JsonResponse
+     * @return array
      */
-    public function releases(string|int $traktId, string $country = 'us'): JsonResponse
+    public function releases(string|int $traktId, string $country = 'us'): array
     {
         return $this->makeRequest("movies/{$traktId}/releases/{$country}");
     }
@@ -312,9 +311,9 @@ class TraktMovie extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/movies/translations
      * @param string|int $traktId
      * @param string $language
-     * @return JsonResponse
+     * @return array
      */
-    public function translations(string|int $traktId, string $language = 'pt'): JsonResponse
+    public function translations(string|int $traktId, string $language = 'pt'): array
     {
         return $this->makeRequest("movies/{$traktId}/translations/{$language}");
     }
@@ -328,7 +327,7 @@ class TraktMovie extends LaravelTrakt
      * @param string $sort
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
     public function lists(
         string|int $traktId,
@@ -336,7 +335,7 @@ class TraktMovie extends LaravelTrakt
         string $sort = 'popular',
         int $page = 1,
         int $limit = 10
-    ): JsonResponse
+    ): array
     {
         $params = $this->buildPaginationParams($page, $limit);
         
@@ -355,11 +354,11 @@ class TraktMovie extends LaravelTrakt
      * @param string|int $traktId
      * @param bool $extended
      * @param string|null $level
-     * @return JsonResponse
+     * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function people(string|int $traktId, bool $extended = true, ?string $level = 'full'): JsonResponse
+    public function people(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
     {
         $params = [];
         
@@ -376,9 +375,9 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/ratings
      * @param string|int $traktId
-     * @return JsonResponse
+     * @return array
      */
-    public function ratings(string|int $traktId): JsonResponse
+    public function ratings(string|int $traktId): array
     {
         return $this->makeRequest("movies/{$traktId}/ratings");
     }
@@ -392,11 +391,11 @@ class TraktMovie extends LaravelTrakt
      * @param int $limit
      * @param bool $extended
      * @param string|null $level
-     * @return JsonResponse
+     * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function related(string|int $traktId, int $page = 1, int $limit = 10, bool $extended = true, ?string $level = 'full'): JsonResponse
+    public function related(string|int $traktId, int $page = 1, int $limit = 10, bool $extended = true, ?string $level = 'full'): array
     {
         $params = $this->buildPaginationParams($page, $limit);
 
@@ -413,9 +412,9 @@ class TraktMovie extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/movies/stats
      * @param string|int $traktId
-     * @return JsonResponse
+     * @return array
      */
-    public function stats(string|int $traktId): JsonResponse
+    public function stats(string|int $traktId): array
     {
         return $this->makeRequest("movies/{$traktId}/stats");
     }
@@ -427,11 +426,11 @@ class TraktMovie extends LaravelTrakt
      * @param string|int $traktId
      * @param bool $extended
      * @param string|null $level
-     * @return JsonResponse
+     * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function watching(string|int $traktId, bool $extended = true, ?string $level = 'full'): JsonResponse
+    public function watching(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
     {
         $params = [];
         

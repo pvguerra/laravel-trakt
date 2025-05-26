@@ -2,13 +2,11 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
-
-class TraktGenre extends LaravelTrakt
+class TraktGenre
 {
-    use HttpResponses;
+    public function __construct(protected Client $client)
+    {
+    }
 
     /**
      * One or more genres are attached to all movies and shows.
@@ -17,14 +15,10 @@ class TraktGenre extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/genres
      * @param string $type
-     * @return JsonResponse
+     * @return array
      */
-    public function genres(string $type): JsonResponse
+    public function genres(string $type): array
     {
-        $uri = $this->apiUrl . "genres/$type";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->get("genres/$type")->json();
     }
 }

@@ -2,13 +2,11 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
-
-class TraktCountry extends LaravelTrakt
+class TraktCountry
 {
-    use HttpResponses;
+    public function __construct(protected Client $client)
+    {
+    }
 
     /**
      * Some API methods allow filtering by country code, so it's good to cache this list in your app.
@@ -16,14 +14,10 @@ class TraktCountry extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/countries
      * @param string $type
-     * @return JsonResponse
+     * @return array
      */
-    public function countries(string $type): JsonResponse
+    public function countries(string $type): array
     {
-        $uri = $this->apiUrl . "countries/$type";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->get("countries/$type")->json();
     }
 }

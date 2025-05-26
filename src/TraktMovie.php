@@ -3,54 +3,11 @@
 namespace Pvguerra\LaravelTrakt;
 
 use Exception;
-use Illuminate\Http\Client\ConnectionException;
 
-class TraktMovie extends LaravelTrakt
+class TraktMovie
 {
-    /**
-     * Build query string from parameters array
-     *
-     * @param array $params
-     * @return string
-     */
-    private function buildQueryString(array $params): string
+    public function __construct(protected Client $client)
     {
-        return count($params) > 0 ? '?' . implode('&', $params) : '';
-    }
-    
-    /**
-     * Build pagination parameters
-     *
-     * @param int $page
-     * @param int $limit
-     * @return array
-     */
-    private function buildPaginationParams(int $page, int $limit): array
-    {
-        $params = [];
-        $params[] = "page={$page}";
-        $params[] = "limit={$limit}";
-        return $params;
-    }
-    
-    /**
-     * Make API request and handle exceptions
-     *
-     * @param string $uri
-     * @return array
-     * @throws ConnectionException
-     * @throws Exception
-     */
-    private function makeRequest(string $uri): array
-    {
-        try {
-            $response = $this->client->get($uri)->throw()->json();
-            return $response;
-        } catch (ConnectionException $e) {
-            throw new ConnectionException($e->getMessage(), $e->getCode(), $e);
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
     }
 
     /**
@@ -70,8 +27,8 @@ class TraktMovie extends LaravelTrakt
             $params[] = "extended={$level}";
         }
 
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/{$traktId}{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/{$traktId}{$queryString}")->json();
     }
 
     /**
@@ -85,7 +42,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function aliases(string|int $traktId): array
     {
-        return $this->makeRequest("movies/{$traktId}/aliases");
+        return $this->client->get("movies/{$traktId}/aliases")->json();
     }
 
     /**
@@ -109,7 +66,7 @@ class TraktMovie extends LaravelTrakt
         ?string $filters = null
     ): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($extended && $level) {
             $params[] = "extended={$level}";
@@ -119,8 +76,8 @@ class TraktMovie extends LaravelTrakt
             $params[] = $filters;
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/trending{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/trending{$queryString}")->json();
     }
 
     /**
@@ -135,14 +92,14 @@ class TraktMovie extends LaravelTrakt
      */
     public function popular(?string $filters = null, int $page = 1, int $limit = 10): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($filters) {
             $params[] = $filters;
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/popular{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/popular{$queryString}")->json();
     }
 
     /**
@@ -163,14 +120,14 @@ class TraktMovie extends LaravelTrakt
         int $limit = 10
     ): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($filters) {
             $params[] = $filters;
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/recommended/{$period}{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/recommended/{$period}{$queryString}")->json();
     }
 
     /**
@@ -191,14 +148,14 @@ class TraktMovie extends LaravelTrakt
         int $limit = 10
     ): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($filters) {
             $params[] = $filters;
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/played/{$period}{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/played/{$period}{$queryString}")->json();
     }
 
     /**
@@ -219,14 +176,14 @@ class TraktMovie extends LaravelTrakt
         int $limit = 10
     ): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($filters) {
             $params[] = $filters;
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/watched/{$period}{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/watched/{$period}{$queryString}")->json();
     }
 
     /**
@@ -247,14 +204,14 @@ class TraktMovie extends LaravelTrakt
         int $limit = 10
     ): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($filters) {
             $params[] = $filters;
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/collected/{$period}{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/collected/{$period}{$queryString}")->json();
     }
 
     /**
@@ -268,14 +225,14 @@ class TraktMovie extends LaravelTrakt
      */
     public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($filters) {
             $params[] = $filters;
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/anticipated{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/anticipated{$queryString}")->json();
     }
 
     /**
@@ -286,7 +243,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function boxOffice(): array
     {
-        return $this->makeRequest("movies/boxoffice");
+        return $this->client->get("movies/boxoffice")->json();
     }
 
     /**
@@ -302,7 +259,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function releases(string|int $traktId, string $country = 'us'): array
     {
-        return $this->makeRequest("movies/{$traktId}/releases/{$country}");
+        return $this->client->get("movies/{$traktId}/releases/{$country}")->json();
     }
 
     /**
@@ -315,7 +272,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function translations(string|int $traktId, string $language = 'pt'): array
     {
-        return $this->makeRequest("movies/{$traktId}/translations/{$language}");
+        return $this->client->get("movies/{$traktId}/translations/{$language}")->json();
     }
 
     /**
@@ -337,10 +294,10 @@ class TraktMovie extends LaravelTrakt
         int $limit = 10
     ): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/{$traktId}/lists/{$type}/{$sort}{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/{$traktId}/lists/{$type}/{$sort}{$queryString}")->json();
     }
 
     /**
@@ -366,8 +323,8 @@ class TraktMovie extends LaravelTrakt
             $params[] = "extended={$level}";
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/{$traktId}/people{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/{$traktId}/people{$queryString}")->json();
     }
 
     /**
@@ -379,7 +336,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function ratings(string|int $traktId): array
     {
-        return $this->makeRequest("movies/{$traktId}/ratings");
+        return $this->client->get("movies/{$traktId}/ratings")->json();
     }
 
     /**
@@ -397,14 +354,14 @@ class TraktMovie extends LaravelTrakt
      */
     public function related(string|int $traktId, int $page = 1, int $limit = 10, bool $extended = true, ?string $level = 'full'): array
     {
-        $params = $this->buildPaginationParams($page, $limit);
+        $params = $this->client->buildPaginationParams($page, $limit);
 
         if ($extended && $level) {
             $params[] = "extended={$level}";
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/{$traktId}/related{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/{$traktId}/related{$queryString}")->json();
     }
 
     /**
@@ -416,7 +373,7 @@ class TraktMovie extends LaravelTrakt
      */
     public function stats(string|int $traktId): array
     {
-        return $this->makeRequest("movies/{$traktId}/stats");
+        return $this->client->get("movies/{$traktId}/stats")->json();
     }
 
     /**
@@ -438,7 +395,7 @@ class TraktMovie extends LaravelTrakt
             $params[] = "extended={$level}";
         }
         
-        $queryString = $this->buildQueryString($params);
-        return $this->makeRequest("movies/{$traktId}/watching{$queryString}");
+        $queryString = $this->client->buildQueryString($params);
+        return $this->client->get("movies/{$traktId}/watching{$queryString}")->json();
     }
 }

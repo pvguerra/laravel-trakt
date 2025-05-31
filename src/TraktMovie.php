@@ -3,11 +3,32 @@
 namespace Pvguerra\LaravelTrakt;
 
 use Exception;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
 class TraktMovie
 {
-    public function __construct(protected Client $client)
+    public function __construct(protected ClientInterface $client)
     {
+    }
+    
+    private function buildExtendedParams(bool $extended, ?string $level): array
+    {
+        $params = [];
+        
+        if ($extended && $level) {
+            $params[] = "extended={$level}";
+        }
+        
+        return $params;
+    }
+    
+    private function addFiltersToParams(array $params, ?string $filters): array
+    {
+        if ($filters) {
+            $params[] = $filters;
+        }
+        
+        return $params;
     }
 
     /**
@@ -21,12 +42,7 @@ class TraktMovie
      */
     public function get(string|int $traktId, bool $extended = false, ?string $level = 'full'): array
     {
-        $params = [];
-
-        if ($extended && $level) {
-            $params[] = "extended={$level}";
-        }
-
+        $params = $this->buildExtendedParams($extended, $level);
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/{$traktId}{$queryString}")->json();
     }
@@ -67,14 +83,8 @@ class TraktMovie
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-
-        if ($extended && $level) {
-            $params[] = "extended={$level}";
-        }
-
-        if ($filters) {
-            $params[] = $filters;
-        }
+        $params = array_merge($params, $this->buildExtendedParams($extended, $level));
+        $params = $this->addFiltersToParams($params, $filters);
         
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/trending{$queryString}")->json();
@@ -85,18 +95,17 @@ class TraktMovie
      * Popularity is calculated using the rating percentage and the number of ratings.
      *
      * https://trakt.docs.apiary.io/#reference/movies/popular
-     * @param ?string $filters
      * @param int $page
      * @param int $limit
+     * @param ?string $filters
      * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function popular(?string $filters = null, int $page = 1, int $limit = 10): array
+    public function popular(int $page = 1, int $limit = 10, ?string $filters = null): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-
-        if ($filters) {
-            $params[] = $filters;
-        }
+        $params = $this->addFiltersToParams($params, $filters);
         
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/popular{$queryString}")->json();
@@ -121,10 +130,7 @@ class TraktMovie
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-
-        if ($filters) {
-            $params[] = $filters;
-        }
+        $params = $this->addFiltersToParams($params, $filters);
         
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/recommended/{$period}{$queryString}")->json();
@@ -218,18 +224,17 @@ class TraktMovie
      * Returns the most anticipated movies based on the number of lists a movie appears on.
      *
      * https://trakt.docs.apiary.io/#reference/movies/anticipated
-     * @param ?string $filters
      * @param int $page
      * @param int $limit
+     * @param ?string $filters
      * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function anticipated(?string $filters = null, int $page = 1, int $limit = 10): array
+    public function anticipated(int $page = 1, int $limit = 10, ?string $filters = null): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-
-        if ($filters) {
-            $params[] = $filters;
-        }
+        $params = $this->addFiltersToParams($params, $filters);
         
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/anticipated{$queryString}")->json();
@@ -240,6 +245,8 @@ class TraktMovie
      *
      * https://trakt.docs.apiary.io/#reference/movies/boxoffice
      * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function boxOffice(): array
     {
@@ -256,6 +263,8 @@ class TraktMovie
      * @param string|int $traktId
      * @param string $country
      * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function releases(string|int $traktId, string $country = 'us'): array
     {
@@ -269,6 +278,8 @@ class TraktMovie
      * @param string|int $traktId
      * @param string $language
      * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function translations(string|int $traktId, string $language = 'pt'): array
     {
@@ -317,11 +328,7 @@ class TraktMovie
      */
     public function people(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params[] = "extended={$level}";
-        }
+        $params = $this->buildExtendedParams($extended, $level);
         
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/{$traktId}/people{$queryString}")->json();
@@ -333,6 +340,8 @@ class TraktMovie
      * https://trakt.docs.apiary.io/#reference/movies/ratings
      * @param string|int $traktId
      * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function ratings(string|int $traktId): array
     {
@@ -355,10 +364,7 @@ class TraktMovie
     public function related(string|int $traktId, int $page = 1, int $limit = 10, bool $extended = true, ?string $level = 'full'): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-
-        if ($extended && $level) {
-            $params[] = "extended={$level}";
-        }
+        $params = array_merge($params, $this->buildExtendedParams($extended, $level));
         
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/{$traktId}/related{$queryString}")->json();
@@ -370,6 +376,8 @@ class TraktMovie
      * https://trakt.docs.apiary.io/#reference/movies/stats
      * @param string|int $traktId
      * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function stats(string|int $traktId): array
     {
@@ -389,11 +397,7 @@ class TraktMovie
      */
     public function watching(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params[] = "extended={$level}";
-        }
+        $params = $this->buildExtendedParams($extended, $level);
         
         $queryString = $this->client->buildQueryString($params);
         return $this->client->get("movies/{$traktId}/watching{$queryString}")->json();

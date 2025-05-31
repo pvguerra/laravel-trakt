@@ -5,10 +5,10 @@ namespace Pvguerra\LaravelTrakt;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class Client
+class Client implements ClientInterface
 {
     private string $baseUrl;
     private string $clientId;
@@ -18,7 +18,7 @@ class Client
     private string $apiVersion = '2';
     private PendingRequest $httpClient;
 
-    public function __construct(private ?string $apiToken = null)
+    public function __construct()
     {
         $this->baseUrl = config('trakt.api_url', 'https://api.trakt.tv');
         $this->clientId = config('trakt.client_id');

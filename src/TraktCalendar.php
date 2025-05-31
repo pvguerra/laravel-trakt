@@ -2,9 +2,11 @@
 
 namespace Pvguerra\LaravelTrakt;
 
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
+
 class TraktCalendar
 {
-    public function __construct(protected Client $client)
+    public function __construct(protected ClientInterface $client)
     {
     }
 
@@ -16,15 +18,19 @@ class TraktCalendar
      * @param int $days
      * @param bool $extended
      * @param string|null $level
+     * @param ?string $filters
      * @return array
      */
-    public function shows(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function myShows(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/my/shows/{$startDate}/{$days}", $params)->json();
     }
@@ -37,15 +43,19 @@ class TraktCalendar
      * @param int $days
      * @param bool $extended
      * @param string|null $level
+     * @param ?string $filters
      * @return array
      */
-    public function newShows(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function myNewShows(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/my/shows/new/{$startDate}/{$days}", $params)->json();
     }
@@ -58,17 +68,46 @@ class TraktCalendar
      * @param int $days
      * @param bool $extended
      * @param string|null $level
+     * @param ?string $filters
      * @return array
      */
-    public function seasonPremieres(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function mySeasonPremieres(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/my/shows/premieres/{$startDate}/{$days}", $params)->json();
+    }
+
+    /**
+     * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
+     *
+     * https://trakt.docs.apiary.io/#reference/calendars/my-finales/get-finales
+     * @param string $startDate
+     * @param int $days
+     * @param bool $extended
+     * @param string|null $level
+     * @param ?string $filters
+     * @return array
+     */
+    public function myFinales(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
+    {
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
+        
+        return $this->client->get("calendars/my/shows/finales/{$startDate}/{$days}", $params)->json();
     }
 
     /**
@@ -79,17 +118,46 @@ class TraktCalendar
      * @param int $days
      * @param bool $extended
      * @param string|null $level
+     * @param ?string $filters
      * @return array
      */
-    public function movies(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function myMovies(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/my/movies/{$startDate}/{$days}", $params)->json();
+    }
+
+    /**
+     * Returns all movies with a DVD release date during the time period specified.
+     *
+     * https://trakt.docs.apiary.io/#reference/calendars/my-dvd/get-dvd-releases
+     * @param string $startDate
+     * @param int $days
+     * @param bool $extended
+     * @param string|null $level
+     * @param ?string $filters
+     * @return array
+     */
+    public function myDVD(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
+    {
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
+        
+        return $this->client->get("calendars/my/dvd/{$startDate}/{$days}", $params)->json();
     }
 
     /**
@@ -100,15 +168,19 @@ class TraktCalendar
      * @param int $days
      * @param bool $extended
      * @param string|null $level
+     * @param ?string $filters
      * @return array
      */
-    public function allShows(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function allShows(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/all/shows/{$startDate}/{$days}", $params)->json();
     }
@@ -123,13 +195,16 @@ class TraktCalendar
      * @param string|null $level
      * @return array
      */
-    public function allNewShows(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function allNewShows(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/all/shows/new/{$startDate}/{$days}", $params)->json();
     }
@@ -144,15 +219,43 @@ class TraktCalendar
      * @param string|null $level
      * @return array
      */
-    public function allSeasonPremieres(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function allSeasonPremieres(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/all/shows/premieres/{$startDate}/{$days}", $params)->json();
+    }
+
+    /**
+     * Returns all show finales (mid_season_finale, season_finale, series_finale) airing during the time period specified.
+     *
+     * https://trakt.docs.apiary.io/#reference/calendars/all-finales/get-finales
+     * @param string $startDate
+     * @param int $days
+     * @param bool $extended
+     * @param string|null $level
+     * @param ?string $filters
+     * @return array
+     */
+    public function allFinales(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
+    {
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
+        
+        return $this->client->get("calendars/all/shows/finales/{$startDate}/{$days}", $params)->json();
     }
 
     /**
@@ -165,14 +268,42 @@ class TraktCalendar
      * @param string|null $level
      * @return array
      */
-    public function allMovies(string $startDate, int $days, bool $extended = true, ?string $level = 'full'): array
+    public function allMovies(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("calendars/all/movies/{$startDate}/{$days}", $params)->json();
+    }
+
+    /**
+     * Returns all movies with a DVD release date during the time period specified.
+     *
+     * https://trakt.docs.apiary.io/#reference/calendars/my-dvd/get-dvd-releases
+     * @param string $startDate
+     * @param int $days
+     * @param bool $extended
+     * @param string|null $level
+     * @param ?string $filters
+     * @return array
+     */
+    public function allDVD(
+        string $startDate,
+        int $days,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
+    {
+        $params = $this->client->buildExtendedParams($extended, $level);
+        $params = $this->client->addFiltersToParams($params, $filters);
+        
+        return $this->client->get("calendars/all/dvd/{$startDate}/{$days}", $params)->json();
     }
 }

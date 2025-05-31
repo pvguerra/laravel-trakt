@@ -2,9 +2,11 @@
 
 namespace Pvguerra\LaravelTrakt;
 
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
+
 class TraktCountry
 {
-    public function __construct(protected Client $client)
+    public function __construct(protected ClientInterface $client)
     {
     }
 

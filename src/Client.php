@@ -76,6 +76,27 @@ class Client implements ClientInterface
         ];
     }
 
+    public function buildExtendedParams(bool $extended, ?string $level): array
+    {
+        $params = [];
+        
+        if ($extended && $level) {
+            $params['extended'] = $level;
+        }
+        
+        return $params;
+    }
+    
+    public function addFiltersToParams(array $params, ?string $filters): array
+    {
+        if ($filters) {
+            parse_str($filters, $filterParams);
+            $params = array_merge($params, $filterParams);
+        }
+        
+        return $params;
+    }
+
     public function getHeaders(): array
     {
         return $this->headers;

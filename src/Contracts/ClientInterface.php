@@ -17,6 +17,10 @@ interface ClientInterface
     public function buildQueryString(array $params): string;
     
     public function buildPaginationParams(int $page = 1, int $limit = 10): array;
+
+    public function buildExtendedParams(bool $extended, ?string $level): array;
+    
+    public function addFiltersToParams(array $params, ?string $filters): array;
     
     public function getHeaders(): array;
     

@@ -10,27 +10,6 @@ class TraktMovie
     public function __construct(protected ClientInterface $client)
     {
     }
-    
-    private function buildExtendedParams(bool $extended, ?string $level): array
-    {
-        $params = [];
-        
-        if ($extended && $level) {
-            $params['extended'] = $level;
-        }
-        
-        return $params;
-    }
-    
-    private function addFiltersToParams(array $params, ?string $filters): array
-    {
-        if ($filters) {
-            parse_str($filters, $filterParams);
-            $params = array_merge($params, $filterParams);
-        }
-        
-        return $params;
-    }
 
     /**
      * Returns a single movie's details.
@@ -43,9 +22,8 @@ class TraktMovie
      */
     public function get(string|int $traktId, bool $extended = false, ?string $level = 'full'): array
     {
-        $params = $this->buildExtendedParams($extended, $level);
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/{$traktId}{$queryString}")->json();
+        $params = $this->client->buildExtendedParams($extended, $level);
+        return $this->client->get("movies/{$traktId}", $params)->json();
     }
 
     /**
@@ -59,7 +37,7 @@ class TraktMovie
      */
     public function aliases(string|int $traktId): array
     {
-        return $this->client->get("movies/{$traktId}/aliases")->json();
+        return $this->client->get("movies/{$traktId}/aliases", [])->json();
     }
 
     /**
@@ -84,11 +62,10 @@ class TraktMovie
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-        $params = array_merge($params, $this->buildExtendedParams($extended, $level));
-        $params = $this->addFiltersToParams($params, $filters);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
+        $params = $this->client->addFiltersToParams($params, $filters);
         
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/trending{$queryString}")->json();
+        return $this->client->get("movies/trending", $params)->json();
     }
 
     /**
@@ -106,10 +83,9 @@ class TraktMovie
     public function popular(int $page = 1, int $limit = 10, ?string $filters = null): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-        $params = $this->addFiltersToParams($params, $filters);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/popular{$queryString}")->json();
+        return $this->client->get("movies/popular", $params)->json();
     }
 
     /**
@@ -131,10 +107,9 @@ class TraktMovie
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-        $params = $this->addFiltersToParams($params, $filters);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/recommended/{$period}{$queryString}")->json();
+        return $this->client->get("movies/recommended/{$period}", $params)->json();
     }
 
     /**
@@ -156,13 +131,9 @@ class TraktMovie
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-
-        if ($filters) {
-            $params[] = $filters;
-        }
+        $params = $this->client->addFiltersToParams($params, $filters);
         
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/played/{$period}{$queryString}")->json();
+        return $this->client->get("movies/played/{$period}", $params)->json();
     }
 
     /**
@@ -184,13 +155,9 @@ class TraktMovie
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
+        $params = $this->client->addFiltersToParams($params, $filters);
 
-        if ($filters) {
-            $params[] = $filters;
-        }
-        
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/watched/{$period}{$queryString}")->json();
+        return $this->client->get("movies/watched/{$period}", $params)->json();
     }
 
     /**
@@ -212,13 +179,8 @@ class TraktMovie
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-
-        if ($filters) {
-            $params[] = $filters;
-        }
-        
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/collected/{$period}{$queryString}")->json();
+        $params = $this->client->addFiltersToParams($params, $filters);
+        return $this->client->get("movies/collected/{$period}", $params)->json();
     }
 
     /**
@@ -235,10 +197,9 @@ class TraktMovie
     public function anticipated(int $page = 1, int $limit = 10, ?string $filters = null): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-        $params = $this->addFiltersToParams($params, $filters);
+        $params = $this->client->addFiltersToParams($params, $filters);
         
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/anticipated{$queryString}")->json();
+        return $this->client->get("movies/anticipated", $params)->json();
     }
 
     /**
@@ -251,7 +212,7 @@ class TraktMovie
      */
     public function boxOffice(): array
     {
-        return $this->client->get("movies/boxoffice")->json();
+        return $this->client->get("movies/boxoffice", [])->json();
     }
 
     /**
@@ -269,7 +230,7 @@ class TraktMovie
      */
     public function releases(string|int $traktId, string $country = 'us'): array
     {
-        return $this->client->get("movies/{$traktId}/releases/{$country}")->json();
+        return $this->client->get("movies/{$traktId}/releases/{$country}", [])->json();
     }
 
     /**
@@ -284,7 +245,7 @@ class TraktMovie
      */
     public function translations(string|int $traktId, string $language = 'pt'): array
     {
-        return $this->client->get("movies/{$traktId}/translations/{$language}")->json();
+        return $this->client->get("movies/{$traktId}/translations/{$language}", [])->json();
     }
 
     /**
@@ -329,10 +290,8 @@ class TraktMovie
      */
     public function people(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
     {
-        $params = $this->buildExtendedParams($extended, $level);
-        
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/{$traktId}/people{$queryString}")->json();
+        $params = $this->client->buildExtendedParams($extended, $level);
+        return $this->client->get("movies/{$traktId}/people", $params)->json();
     }
 
     /**
@@ -346,7 +305,7 @@ class TraktMovie
      */
     public function ratings(string|int $traktId): array
     {
-        return $this->client->get("movies/{$traktId}/ratings")->json();
+        return $this->client->get("movies/{$traktId}/ratings", [])->json();
     }
 
     /**
@@ -365,10 +324,9 @@ class TraktMovie
     public function related(string|int $traktId, int $page = 1, int $limit = 10, bool $extended = true, ?string $level = 'full'): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
-        $params = array_merge($params, $this->buildExtendedParams($extended, $level));
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
         
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/{$traktId}/related{$queryString}")->json();
+        return $this->client->get("movies/{$traktId}/related", $params)->json();
     }
 
     /**
@@ -382,7 +340,7 @@ class TraktMovie
      */
     public function stats(string|int $traktId): array
     {
-        return $this->client->get("movies/{$traktId}/stats")->json();
+        return $this->client->get("movies/{$traktId}/stats", [])->json();
     }
 
     /**
@@ -398,9 +356,8 @@ class TraktMovie
      */
     public function watching(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
     {
-        $params = $this->buildExtendedParams($extended, $level);
+        $params = $this->client->buildExtendedParams($extended, $level);
         
-        $queryString = $this->client->buildQueryString($params);
-        return $this->client->get("movies/{$traktId}/watching{$queryString}")->json();
+        return $this->client->get("movies/{$traktId}/watching", $params)->json();
     }
 }

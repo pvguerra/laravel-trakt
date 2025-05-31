@@ -16,7 +16,7 @@ class TraktMovie
         $params = [];
         
         if ($extended && $level) {
-            $params[] = "extended={$level}";
+            $params['extended'] = $level;
         }
         
         return $params;
@@ -25,7 +25,8 @@ class TraktMovie
     private function addFiltersToParams(array $params, ?string $filters): array
     {
         if ($filters) {
-            $params[] = $filters;
+            parse_str($filters, $filterParams);
+            $params = array_merge($params, $filterParams);
         }
         
         return $params;

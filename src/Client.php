@@ -61,15 +61,19 @@ class Client implements ClientInterface
 
     public function buildQueryString(array $params): string
     {
-        return count($params) > 0 ? '?' . implode('&', $params) : '';
+        if (empty($params)) {
+            return '';
+        }
+        
+        return '?' . http_build_query($params);
     }
 
     public function buildPaginationParams(int $page = 1, int $limit = 10): array
     {
-        $params = [];
-        $params[] = "page={$page}";
-        $params[] = "limit={$limit}";
-        return $params;
+        return [
+            'page' => $page,
+            'limit' => $limit
+        ];
     }
 
     public function getHeaders(): array

@@ -12,35 +12,6 @@ class TraktMovie
     }
 
     /**
-     * Returns a single movie's details.
-     *
-     * https://trakt.docs.apiary.io/#reference/movies/summary
-     * @param string|int $traktId
-     * @return array
-     * @throws \Illuminate\Http\Client\ConnectionException
-     * @throws \Exception
-     */
-    public function get(string|int $traktId, bool $extended = false, ?string $level = 'full'): array
-    {
-        $params = $this->client->buildExtendedParams($extended, $level);
-        return $this->client->get("movies/{$traktId}", $params)->json();
-    }
-
-    /**
-     * Returns all title aliases for a movie. Includes country where name is different.
-     *
-     * https://trakt.docs.apiary.io/#reference/movies/aliases
-     * @param string|int $traktId
-     * @return array
-     * @throws \Illuminate\Http\Client\ConnectionException
-     * @throws \Exception
-     */
-    public function aliases(string|int $traktId): array
-    {
-        return $this->client->get("movies/{$traktId}/aliases", [])->json();
-    }
-
-    /**
      * Returns all movies being watched right now. Movies with the most users are returned first.
      *
      * https://trakt.docs.apiary.io/#reference/movies/trending
@@ -75,41 +46,55 @@ class TraktMovie
      * https://trakt.docs.apiary.io/#reference/movies/popular
      * @param int $page
      * @param int $limit
+     * @param bool $extended
+     * @param ?string $level
      * @param ?string $filters
      * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function popular(int $page = 1, int $limit = 10, ?string $filters = null): array
+    public function popular(
+        int $page = 1,
+        int $limit = 10,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
         $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("movies/popular", $params)->json();
     }
 
     /**
-     * Returns the most recommended movies in the specified time period, defaulting to weekly.
+     * Returns the most favorited movies in the specified time period, defaulting to weekly.
      * All stats are relative to the specific time period.
      *
-     * https://trakt.docs.apiary.io/#reference/movies/recommended
+     * https://trakt.docs.apiary.io/#reference/movies/favorited
      * @param string $period
+     * @param bool $extended
+     * @param ?string $level
      * @param ?string $filters
      * @param int $page
      * @param int $limit
      * @return array
      */
-    public function recommended(
+    public function favorited(
         string $period = 'weekly',
+        bool $extended = false,
+        ?string $level = 'full',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
         $params = $this->client->addFiltersToParams($params, $filters);
         
-        return $this->client->get("movies/recommended/{$period}", $params)->json();
+        return $this->client->get("movies/favorited/{$period}", $params)->json();
     }
 
     /**
@@ -118,6 +103,8 @@ class TraktMovie
      *
      * https://trakt.docs.apiary.io/#reference/movies/played
      * @param string $period
+     * @param bool $extended
+     * @param ?string $level
      * @param ?string $filters
      * @param int $page
      * @param int $limit
@@ -125,12 +112,15 @@ class TraktMovie
      */
     public function played(
         string $period = 'weekly',
+        bool $extended = false,
+        ?string $level = 'full',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
         $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("movies/played/{$period}", $params)->json();
@@ -142,6 +132,8 @@ class TraktMovie
      *
      * https://trakt.docs.apiary.io/#reference/movies/watched
      * @param string $period
+     * @param bool $extended
+     * @param ?string $level
      * @param ?string $filters
      * @param int $page
      * @param int $limit
@@ -149,12 +141,15 @@ class TraktMovie
      */
     public function watched(
         string $period = 'weekly',
+        bool $extended = false,
+        ?string $level = 'full',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
         $params = $this->client->addFiltersToParams($params, $filters);
 
         return $this->client->get("movies/watched/{$period}", $params)->json();
@@ -166,6 +161,8 @@ class TraktMovie
      *
      * https://trakt.docs.apiary.io/#reference/movies/collected
      * @param string $period
+     * @param bool $extended
+     * @param ?string $level
      * @param ?string $filters
      * @param int $page
      * @param int $limit
@@ -173,12 +170,15 @@ class TraktMovie
      */
     public function collected(
         string $period = 'weekly',
+        bool $extended = false,
+        ?string $level = 'full',
         ?string $filters = null,
         int $page = 1,
         int $limit = 10
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
         $params = $this->client->addFiltersToParams($params, $filters);
         return $this->client->get("movies/collected/{$period}", $params)->json();
     }
@@ -189,14 +189,23 @@ class TraktMovie
      * https://trakt.docs.apiary.io/#reference/movies/anticipated
      * @param int $page
      * @param int $limit
+     * @param bool $extended
+     * @param ?string $level
      * @param ?string $filters
      * @return array
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function anticipated(int $page = 1, int $limit = 10, ?string $filters = null): array
+    public function anticipated(
+        int $page = 1,
+        int $limit = 10,
+        bool $extended = false,
+        ?string $level = 'full',
+        ?string $filters = null
+    ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
         $params = $this->client->addFiltersToParams($params, $filters);
         
         return $this->client->get("movies/anticipated", $params)->json();
@@ -214,6 +223,40 @@ class TraktMovie
     {
         return $this->client->get("movies/boxoffice", [])->json();
     }
+
+    /**
+     * Returns a single movie's details.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/summary
+     * @param string|int $traktId
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
+     */
+    public function get(
+        string|int $traktId,
+        bool $extended = false,
+        ?string $level = 'full'
+    ): array
+    {
+        $params = $this->client->buildExtendedParams($extended, $level);
+        return $this->client->get("movies/{$traktId}", $params)->json();
+    }
+
+    /**
+     * Returns all title aliases for a movie. Includes country where name is different.
+     *
+     * https://trakt.docs.apiary.io/#reference/movies/aliases
+     * @param string|int $traktId
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
+     */
+    public function aliases(string|int $traktId): array
+    {
+        return $this->client->get("movies/{$traktId}/aliases", [])->json();
+    }
+
 
     /**
      * Returns all releases for a movie including country, certification, release date, release type, and note.
@@ -288,7 +331,11 @@ class TraktMovie
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function people(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
+    public function people(
+        string|int $traktId,
+        bool $extended = false,
+        ?string $level = 'full'
+    ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
         return $this->client->get("movies/{$traktId}/people", $params)->json();
@@ -321,7 +368,13 @@ class TraktMovie
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function related(string|int $traktId, int $page = 1, int $limit = 10, bool $extended = true, ?string $level = 'full'): array
+    public function related(
+        string|int $traktId,
+        int $page = 1,
+        int $limit = 10,
+        bool $extended = false,
+        ?string $level = 'full'
+    ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
         $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
@@ -354,7 +407,11 @@ class TraktMovie
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function watching(string|int $traktId, bool $extended = true, ?string $level = 'full'): array
+    public function watching(
+        string|int $traktId,
+        bool $extended = false,
+        ?string $level = 'full'
+    ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
         

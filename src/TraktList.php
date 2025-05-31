@@ -2,13 +2,41 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktList extends LaravelTrakt
+class TraktList
 {
-    use HttpResponses;
+    public function __construct(protected ClientInterface $client)
+    {
+    }
+
+    /**
+     * Returns all lists with the most likes and comments over the last 7 days.
+     *
+     * https://trakt.docs.apiary.io/#reference/lists
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function trending(int $page = 1, int $limit = 10): array
+    {
+        $params = $this->client->buildPaginationParams($page, $limit);
+        return $this->client->get("lists/trending", $params)->json();
+    }
+
+    /**
+     * Returns the most popular lists. Popularity is calculated using total number of likes and comments.
+     *
+     * https://trakt.docs.apiary.io/#reference/lists
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function popular(int $page = 1, int $limit = 10): array
+    {
+        $params = $this->client->buildPaginationParams($page, $limit);
+        return $this->client->get("lists/popular", $params)->json();
+    }
 
     /**
      * Returns a single list. Use the /lists/:id/items method to get the actual items this list contains.
@@ -16,15 +44,11 @@ class TraktList extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/lists
      * @param int $traktId
-     * @return JsonResponse
+     * @return array
      */
-    public function get(int $traktId): JsonResponse
+    public function get(int $traktId): array
     {
-        $uri = $this->apiUrl . "lists/$traktId";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->get("lists/$traktId")->json();
     }
 
     /**
@@ -35,48 +59,19 @@ class TraktList extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/lists/list-items/get-items-on-a-list
      * @param int $traktId
      * @param string $type
-     * @return JsonResponse
+     * @return array
      */
-    public function items(int $traktId, string $type): JsonResponse
+    public function items(
+        int $page = 1,
+        int $limit = 10,
+        int $traktId,
+        string $type,
+        bool $extended = false,
+        ?string $level = 'full',
+    ): array
     {
-        $uri = $this->apiUrl . "lists/$traktId/items/$type";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
-    }
-
-    /**
-     * Returns all lists with the most likes and comments over the last 7 days.
-     *
-     * https://trakt.docs.apiary.io/#reference/lists
-     * @param int $page
-     * @param int $limit
-     * @return JsonResponse
-     */
-    public function trending(int $page = 1, int $limit = 10): JsonResponse
-    {
-        $uri = $this->apiUrl . "lists/trending?page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
-    }
-
-    /**
-     * Returns the most popular lists. Popularity is calculated using total number of likes and comments.
-     *
-     * https://trakt.docs.apiary.io/#reference/lists
-     * @param int $page
-     * @param int $limit
-     * @return JsonResponse
-     */
-    public function popular(int $page = 1, int $limit = 10): JsonResponse
-    {
-        $uri = $this->apiUrl . "lists/popular?page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
+        return $this->client->get("lists/$traktId/items/$type", $params)->json();
     }
 }

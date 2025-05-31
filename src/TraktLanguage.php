@@ -2,13 +2,14 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktLanguage extends LaravelTrakt
+class TraktLanguage
 {
-    use HttpResponses;
+
+    public function __construct(protected ClientInterface $client)
+    {
+    }
 
     /**
      * Some API methods allow filtering by language code, so it's good to cache this list in your app.
@@ -16,14 +17,10 @@ class TraktLanguage extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/languages
      * @param string $type
-     * @return JsonResponse
+     * @return array
      */
-    public function languages(string $type): JsonResponse
+    public function languages(string $type): array
     {
-        $uri = $this->apiUrl . "languages/$type";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->get("languages/$type")->json();
     }
 }

@@ -2,27 +2,23 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktNetwork extends LaravelTrakt
+class TraktNetwork
 {
-    use HttpResponses;
+    public function __construct(protected ClientInterface $client)
+    {
+    }
 
     /**
      * Most TV shows have a TV network where it originally aired.
      * Some API methods allow filtering by network, so it's good to cache this list in your app.
      *
      * https://trakt.docs.apiary.io/#reference/networks
-     * @return JsonResponse
+     * @return array
      */
-    public function genres(): JsonResponse
+    public function genres(): array
     {
-        $uri = $this->apiUrl . "networks";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->get("networks")->json();
     }
 }

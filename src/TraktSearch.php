@@ -2,13 +2,13 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktSearch extends LaravelTrakt
+class TraktSearch
 {
-    use HttpResponses;
+    public function __construct(protected ClientInterface $client)
+    {
+    }
 
     /**
      * Search all text fields that a media object contains (i.e. title, overview, etc).
@@ -20,18 +20,16 @@ class TraktSearch extends LaravelTrakt
      * @param string $query
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
     public function query(
-        string $type = 'personal',
-        string $query = 'popular',
         int $page = 1,
-        int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl . "search/$type?query=$query&page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        int $limit = 10,
+        string $type = 'movie',
+        string $query = 'matrix',
+    ): array {
+        $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, ['query' => $query]);
+        return $this->client->get("search/$type", $params)->json();
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktSync extends LaravelTrakt
+class TraktSync
 {
-    use HttpResponses;
+    public function __construct(protected ClientInterface $client)
+    {
+    }
 
     /**
      * This method is a useful first step in the syncing process. We recommended caching these dates locally,
@@ -16,15 +16,13 @@ class TraktSync extends LaravelTrakt
      * syncs so, you don't pull down a ton of data only to see nothing has actually changed.
      *
      * https://trakt.docs.apiary.io/#reference/sync/last-activities/get-last-activity
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function lastActivities(): JsonResponse
+    public function lastActivities(): array
     {
-        $uri = $this->apiUrl . "sync/last_activities";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->get("sync/last_activities")->json();
     }
 
     /**
@@ -33,15 +31,21 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/get-collection/get-collection
      * @param string $type
-     * @return JsonResponse
+     * @param bool $extended
+     * @param ?string $level
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function collection(string $type): JsonResponse
+    public function collection(
+        string $type,
+        bool $extended = true,
+        ?string $level = 'full'
+    ): array
     {
-        $uri = $this->apiUrl . "sync/collection/$type?extended=full";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        $params = $this->client->buildExtendedParams($extended, $level);
+        
+        return $this->client->get("sync/collection/{$type}", $params)->json();
     }
 
     /**
@@ -51,15 +55,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/get-collection/add-items-to-collection
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function addToCollection(array $data): JsonResponse
+    public function addToCollection(array $data): array
     {
-        $uri = $this->apiUrl . "sync/collection";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/collection", $data)->json();
     }
 
     /**
@@ -67,15 +69,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/remove-from-collection/remove-items-from-collection
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function removeFromCollection(array $data): JsonResponse
+    public function removeFromCollection(array $data): array
     {
-        $uri = $this->apiUrl . "sync/collection/remove";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/collection/remove", $data)->json();
     }
 
     /**
@@ -83,15 +83,21 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/get-watched/get-watched
      * @param string $type
-     * @return JsonResponse
+     * @param bool $extended
+     * @param ?string $level
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function watched(string $type): JsonResponse
+    public function watched(
+        string $type,
+        bool $extended = true,
+        ?string $level = 'full'
+    ): array
     {
-        $uri = $this->apiUrl . "sync/watched/$type?extended=full";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        $params = $this->client->buildExtendedParams($extended, $level);
+        
+        return $this->client->get("sync/watched/{$type}", $params)->json();
     }
 
     /**
@@ -104,30 +110,46 @@ class TraktSync extends LaravelTrakt
      * an empty array will be returned.
      *
      * https://trakt.docs.apiary.io/#reference/sync/get-history/get-watched-history
-     * @param string $traktId
-     * @param string $type
-     * @param string $startAt
-     * @param string $endAt
+     * @param string|null $type
+     * @param string|null $traktId
+     * @param string|null $startAt
+     * @param string|null $endAt
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function history(
-        string $traktId,
-        string $type,
-        string $startAt,
-        string $endAt,
+        ?string $type = null,
+        ?string $traktId = null,
+        ?string $startAt = null,
+        ?string $endAt = null,
         int $page = 1,
         int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl
-            . "sync/history/$type/$traktId?extended=full"
-            . "&start_at=$startAt&end_at=$endAt"
-            . "&page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+    ): array
+    {
+        $endpoint = "sync/history";
+        
+        if ($type) {
+            $endpoint .= "/$type";
+            
+            if ($traktId) {
+                $endpoint .= "/$traktId";
+            }
+        }
+        
+        $params = $this->client->buildPaginationParams($page, $limit);
+        
+        if ($startAt) {
+            $params['start_at'] = $startAt;
+        }
+        
+        if ($endAt) {
+            $params['end_at'] = $endAt;
+        }
+        
+        return $this->client->get($endpoint, $params)->json();
     }
 
     /**
@@ -137,15 +159,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/add-to-history/add-items-to-watched-history
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function addToHistory(array $data): JsonResponse
+    public function addToHistory(array $data): array
     {
-        $uri = $this->apiUrl . "sync/history";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/history", $data)->json();
     }
 
     /**
@@ -155,15 +175,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/add-to-history/remove-items-from-history
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function removeFromHistory(array $data): JsonResponse
+    public function removeFromHistory(array $data): array
     {
-        $uri = $this->apiUrl . "sync/history/remove";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/history/remove", $data)->json();
     }
 
     /**
@@ -175,22 +193,29 @@ class TraktSync extends LaravelTrakt
      * @param ?int $rating
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @param bool $extended
+     * @param ?string $level
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function ratings(
         string $type,
         ?int $rating = null,
         int $page = 1,
-        int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl
-            . "sync/ratings/$type"
-            . ($rating ? "/$rating" : "")
-            . "?extended=full&page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        int $limit = 10,
+        bool $extended = true,
+        ?string $level = 'full'
+    ): array
+    {
+        $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
+        
+        if ($rating) {
+            $params['rating'] = $rating;
+        }
+        
+        return $this->client->get("sync/ratings/{$type}", $params)->json();
     }
 
     /**
@@ -199,15 +224,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/get-ratings/add-new-ratings
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function addRating(array $data): JsonResponse
+    public function addRating(array $data): array
     {
-        $uri = $this->apiUrl . "sync/ratings";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/ratings", $data)->json();
     }
 
     /**
@@ -215,15 +238,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/remove-ratings/remove-ratings
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function removeRating(array $data): JsonResponse
+    public function removeRating(array $data): array
     {
-        $uri = $this->apiUrl . "sync/ratings/remove";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/ratings/remove", $data)->json();
     }
 
     /**
@@ -234,19 +255,24 @@ class TraktSync extends LaravelTrakt
      * @param string $sort
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @param bool $extended
+     * @param string|null $level
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function watchlist(
         string $type,
         string $sort = 'rank',
         int $page = 1,
-        int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl . "sync/watchlist/$type/$sort?extended=full&page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        int $limit = 10,
+        bool $extended = true,
+        ?string $level = 'full'
+    ): array {
+        $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
+        
+        return $this->client->get("sync/watchlist/{$type}/{$sort}", $params)->json();
     }
 
     /**
@@ -256,15 +282,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/add-to-watchlist/add-items-to-watchlist
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function addToWatchlist(array $data): JsonResponse
+    public function addToWatchlist(array $data): array
     {
-        $uri = $this->apiUrl . "sync/watchlist";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/watchlist", $data)->json();
     }
 
     /**
@@ -272,15 +296,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/remove-from-watchlist/remove-items-from-watchlist
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function removeFromWatchlist(array $data): JsonResponse
+    public function removeFromWatchlist(array $data): array
     {
-        $uri = $this->apiUrl . "sync/watchlist/remove";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/watchlist/remove", $data)->json();
     }
 
     /**
@@ -294,19 +316,24 @@ class TraktSync extends LaravelTrakt
      * @param string $sort
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @param bool $extended
+     * @param string|null $level
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
     public function recommendations(
         string $type,
         string $sort = 'rank',
         int $page = 1,
-        int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl . "sync/recommendations/$type/$sort?extended=full&page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        int $limit = 10,
+        bool $extended = true,
+        ?string $level = 'full'
+    ): array {
+        $params = $this->client->buildPaginationParams($page, $limit);
+        $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
+        
+        return $this->client->get("sync/recommendations/{$type}/{$sort}", $params)->json();
     }
 
     /**
@@ -315,15 +342,13 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/get-personal-recommendations/add-items-to-personal-recommendations
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function addToRecommendation(array $data): JsonResponse
+    public function addToRecommendation(array $data): array
     {
-        $uri = $this->apiUrl . "sync/recommendations";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/recommendations", $data)->json();
     }
 
     /**
@@ -331,14 +356,12 @@ class TraktSync extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/sync/remove-from-personal-recommendations/remove-items-from-personal-recommendations
      * @param array $data
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function removeFromRecommendation(array $data): JsonResponse
+    public function removeFromRecommendation(array $data): array
     {
-        $uri = $this->apiUrl . "sync/recommendations/remove";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("sync/recommendations/remove", $data)->json();
     }
 }

@@ -24,7 +24,7 @@ class TraktServiceProvider extends PackageServiceProvider
     
     public function packageRegistered(): void
     {
-        $this->app->singleton('trakt', function ($app) {
+        $this->app->singleton('trakt', function () {
             return new Client();
         });
         

@@ -67,7 +67,7 @@ class TraktList
         int $traktId,
         string $type,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);

@@ -28,7 +28,7 @@ class TraktMovie
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -57,7 +57,7 @@ class TraktMovie
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -86,7 +86,7 @@ class TraktMovie
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -115,7 +115,7 @@ class TraktMovie
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -144,7 +144,7 @@ class TraktMovie
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -173,7 +173,7 @@ class TraktMovie
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -200,7 +200,7 @@ class TraktMovie
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -236,7 +236,7 @@ class TraktMovie
     public function get(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -337,7 +337,7 @@ class TraktMovie
     public function people(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -376,7 +376,7 @@ class TraktMovie
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -413,7 +413,7 @@ class TraktMovie
     public function watching(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);

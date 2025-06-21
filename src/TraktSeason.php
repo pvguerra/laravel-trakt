@@ -20,7 +20,7 @@ class TraktSeason
     public function all(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -38,7 +38,7 @@ class TraktSeason
     public function info(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -58,7 +58,7 @@ class TraktSeason
         string|int $traktId,
         int $seasonNumber,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -78,7 +78,7 @@ class TraktSeason
         string|int $traktId,
         int $seasonNumber,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -127,7 +127,7 @@ class TraktSeason
         string|int $traktId,
         int $seasonNumber,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {        
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -147,7 +147,7 @@ class TraktSeason
         string|int $traktId,
         int $seasonNumber,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {        
         $params = $this->client->buildExtendedParams($extended, $level);

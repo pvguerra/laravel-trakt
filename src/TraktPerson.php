@@ -20,7 +20,7 @@ class TraktPerson
     public function get(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array {
         $params = $this->client->buildExtendedParams($extended, $level);
         return $this->client->get("people/{$traktId}", $params)->json();
@@ -37,7 +37,7 @@ class TraktPerson
     public function getMovieCredits(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -56,7 +56,7 @@ class TraktPerson
     public function getShowCredits(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);

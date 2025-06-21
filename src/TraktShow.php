@@ -24,7 +24,7 @@ class TraktShow
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -49,7 +49,7 @@ class TraktShow
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -76,7 +76,7 @@ class TraktShow
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -102,7 +102,7 @@ class TraktShow
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -128,7 +128,7 @@ class TraktShow
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -154,7 +154,7 @@ class TraktShow
         int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -177,7 +177,7 @@ class TraktShow
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -201,7 +201,7 @@ class TraktShow
     public function get(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -335,7 +335,7 @@ class TraktShow
     public function people(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -368,7 +368,7 @@ class TraktShow
         int $page = 1,
         int $limit = 10,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -399,7 +399,7 @@ class TraktShow
     public function watching(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -417,7 +417,7 @@ class TraktShow
     public function nextEpisode(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -435,7 +435,7 @@ class TraktShow
     public function lastEpisode(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -453,7 +453,7 @@ class TraktShow
     public function videos(
         string|int $traktId,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);

@@ -26,7 +26,7 @@ class TraktEpisode
         int $seasonNumber,
         int $episodeNumber,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array {
         $params = $this->client->buildExtendedParams($extended, $level);
         
@@ -48,7 +48,7 @@ class TraktEpisode
         int $seasonNumber,
         int $episodeNumber,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array {
         $params = $this->client->buildExtendedParams($extended, $level);
         
@@ -97,7 +97,7 @@ class TraktEpisode
         int $seasonNumber,
         int $episodeNumber,
         bool $extended = false,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {        
         $params = $this->client->buildExtendedParams($extended, $level);

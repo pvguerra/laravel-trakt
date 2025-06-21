@@ -25,7 +25,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -50,7 +50,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -75,7 +75,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -100,7 +100,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -125,7 +125,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -150,7 +150,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -175,7 +175,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -199,7 +199,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -223,7 +223,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -248,7 +248,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -272,7 +272,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {
@@ -297,7 +297,7 @@ class TraktCalendar
         string $startDate,
         int $days,
         bool $extended = false,
-        ?string $level = 'full',
+        ?string $level = null,
         ?string $filters = null
     ): array
     {

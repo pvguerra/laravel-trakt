@@ -40,7 +40,7 @@ class TraktSync
     public function collection(
         string $type,
         bool $extended = true,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -92,7 +92,7 @@ class TraktSync
     public function watched(
         string $type,
         bool $extended = true,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildExtendedParams($extended, $level);
@@ -205,7 +205,7 @@ class TraktSync
         int $page = 1,
         int $limit = 10,
         bool $extended = true,
-        ?string $level = 'full'
+        ?string $level = null
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -267,7 +267,7 @@ class TraktSync
         int $page = 1,
         int $limit = 10,
         bool $extended = true,
-        ?string $level = 'full'
+        ?string $level = null
     ): array {
         $params = $this->client->buildPaginationParams($page, $limit);
         $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));
@@ -328,7 +328,7 @@ class TraktSync
         int $page = 1,
         int $limit = 10,
         bool $extended = true,
-        ?string $level = 'full'
+        ?string $level = null
     ): array {
         $params = $this->client->buildPaginationParams($page, $limit);
         $params = array_merge($params, $this->client->buildExtendedParams($extended, $level));

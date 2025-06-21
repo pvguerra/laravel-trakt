@@ -5,7 +5,7 @@ namespace Pvguerra\LaravelTrakt;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class LaravelTraktServiceProvider extends PackageServiceProvider
+class TraktServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {

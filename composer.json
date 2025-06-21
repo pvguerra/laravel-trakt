@@ -56,10 +56,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Pvguerra\\LaravelTrakt\\LaravelTraktServiceProvider"
+                "Pvguerra\\LaravelTrakt\\TraktServiceProvider"
             ],
             "aliases": {
-                "LaravelTrakt": "Pvguerra\\LaravelTrakt\\Facades\\LaravelTrakt"
+                "Trakt": "Pvguerra\\LaravelTrakt\\Facades\\Trakt"
             }
         }
     },

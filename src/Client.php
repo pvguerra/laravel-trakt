@@ -7,6 +7,12 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
+use Pvguerra\LaravelTrakt\TraktMovie;
+use Pvguerra\LaravelTrakt\TraktShow;
+use Pvguerra\LaravelTrakt\TraktSearch;
+use Pvguerra\LaravelTrakt\TraktUser;
+use Pvguerra\LaravelTrakt\TraktCalendar;
+use Pvguerra\LaravelTrakt\TraktSync;
 
 class Client implements ClientInterface
 {
@@ -18,7 +24,7 @@ class Client implements ClientInterface
     private string $apiVersion = '2';
     private PendingRequest $httpClient;
 
-    public function __construct(string $bearerToken)
+    public function __construct(?string $bearerToken = null)
     {
         $this->baseUrl = config('trakt.api_url', 'https://api.trakt.tv');
         $this->clientId = config('trakt.client_id');
@@ -159,11 +165,73 @@ class Client implements ClientInterface
      * Set the access token.
      *
      * @param string $token
-     * @return void
+     * @return $this
      */
-    public function setToken(string $token): void
+    public function setToken(string $token): self
     {
         $this->httpClient->withToken($token);
+        
+        return $this;
+    }
+    
+    /**
+     * Get the movie instance.
+     *
+     * @return \Pvguerra\LaravelTrakt\TraktMovie
+     */
+    public function movie(): TraktMovie
+    {
+        return new TraktMovie($this);
+    }
+    
+    /**
+     * Get the show instance.
+     *
+     * @return \Pvguerra\LaravelTrakt\TraktShow
+     */
+    public function show(): TraktShow
+    {
+        return new TraktShow($this);
+    }
+    
+    /**
+     * Get the search instance.
+     *
+     * @return \Pvguerra\LaravelTrakt\TraktSearch
+     */
+    public function search(): TraktSearch
+    {
+        return new TraktSearch($this);
+    }
+    
+    /**
+     * Get the user instance.
+     *
+     * @return \Pvguerra\LaravelTrakt\TraktUser
+     */
+    public function user(): TraktUser
+    {
+        return new TraktUser($this);
+    }
+    
+    /**
+     * Get the calendar instance.
+     *
+     * @return \Pvguerra\LaravelTrakt\TraktCalendar
+     */
+    public function calendar(): TraktCalendar
+    {
+        return new TraktCalendar($this);
+    }
+    
+    /**
+     * Get the sync instance.
+     *
+     * @return \Pvguerra\LaravelTrakt\TraktSync
+     */
+    public function sync(): TraktSync
+    {
+        return new TraktSync($this);
     }
 
     /**

@@ -2,8 +2,11 @@
 
 namespace Pvguerra\LaravelTrakt;
 
+use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Pvguerra\LaravelTrakt\Client;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
 class TraktServiceProvider extends PackageServiceProvider
 {
@@ -17,5 +20,14 @@ class TraktServiceProvider extends PackageServiceProvider
         $package
             ->name('trakt')
             ->hasConfigFile();
+    }
+    
+    public function packageRegistered(): void
+    {
+        $this->app->singleton('trakt', function ($app) {
+            return new Client();
+        });
+        
+        $this->app->bind(ClientInterface::class, Client::class);
     }
 }

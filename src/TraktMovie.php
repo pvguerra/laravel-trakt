@@ -288,7 +288,7 @@ class TraktMovie
      */
     public function translations(
         string|int $traktId,
-        string $language = 'pt-br'
+        string $language = 'pt'
     ): array
     {
         return $this->client->get("movies/{$traktId}/translations/{$language}", [])->json();

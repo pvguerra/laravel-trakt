@@ -18,7 +18,7 @@ class Client implements ClientInterface
     private string $apiVersion = '2';
     private PendingRequest $httpClient;
 
-    public function __construct()
+    public function __construct(string $bearerToken)
     {
         $this->baseUrl = config('trakt.api_url', 'https://api.trakt.tv');
         $this->clientId = config('trakt.client_id');
@@ -37,6 +37,10 @@ class Client implements ClientInterface
                 return $exception instanceof ConnectionException;
             })
             ->timeout(30);
+
+        if ($bearerToken) {
+            $this->httpClient->withToken($bearerToken);
+        }
     }
 
     /**

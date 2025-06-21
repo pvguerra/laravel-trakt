@@ -82,12 +82,12 @@ class TraktMovie
      * @return array
      */
     public function favorited(
+        int $page = 1,
+        int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
         ?string $level = 'full',
-        ?string $filters = null,
-        int $page = 1,
-        int $limit = 10
+        ?string $filters = null
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -111,12 +111,12 @@ class TraktMovie
      * @return array
      */
     public function played(
+        int $page = 1,
+        int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
         ?string $level = 'full',
-        ?string $filters = null,
-        int $page = 1,
-        int $limit = 10
+        ?string $filters = null
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -140,12 +140,12 @@ class TraktMovie
      * @return array
      */
     public function watched(
+        int $page = 1,
+        int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
         ?string $level = 'full',
-        ?string $filters = null,
-        int $page = 1,
-        int $limit = 10
+        ?string $filters = null
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -169,12 +169,12 @@ class TraktMovie
      * @return array
      */
     public function collected(
+        int $page = 1,
+        int $limit = 10,
         string $period = 'weekly',
         bool $extended = false,
         ?string $level = 'full',
-        ?string $filters = null,
-        int $page = 1,
-        int $limit = 10
+        ?string $filters = null
     ): array
     {
         $params = $this->client->buildPaginationParams($page, $limit);
@@ -286,7 +286,10 @@ class TraktMovie
      * @throws \Illuminate\Http\Client\ConnectionException
      * @throws \Exception
      */
-    public function translations(string|int $traktId, string $language = 'pt'): array
+    public function translations(
+        string|int $traktId,
+        string $language = 'pt-br'
+    ): array
     {
         return $this->client->get("movies/{$traktId}/translations/{$language}", [])->json();
     }

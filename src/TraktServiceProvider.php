@@ -15,7 +15,7 @@ class LaravelTraktServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-trakt')
+            ->name('trakt')
             ->hasConfigFile();
     }
 }

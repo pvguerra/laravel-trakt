@@ -5,12 +5,12 @@ namespace Pvguerra\LaravelTrakt\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Pvguerra\LaravelTrakt\LaravelTrakt
+ * @see \Pvguerra\LaravelTrakt\Client
  */
-class LaravelTrakt extends Facade
+class Trakt extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'laravel-trakt';
+        return 'trakt';
     }
 }

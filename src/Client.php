@@ -156,6 +156,17 @@ class Client implements ClientInterface
     }
 
     /**
+     * Set the access token.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function setToken(string $token): void
+    {
+        $this->httpClient->withToken($token);
+    }
+
+    /**
      * Make a GET request to the Trakt API.
      *
      * @param string $endpoint

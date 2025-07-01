@@ -108,7 +108,7 @@ test('lists method calls client with correct parameters', function (string $type
         ->once()
         ->andReturn([]);
     
-    $result = $this->traktPerson->lists($this->page, $this->limit, $this->traktId, $type, $sort);
+    $result = $this->traktPerson->lists($this->traktId, $type, $sort, $this->page, $this->limit);
     
     expect($result)->toBeArray();
 })->with([
@@ -320,5 +320,5 @@ test('person methods handle error responses', function (string $method, array $a
     ['get', ['bryan-cranston', false, null]],
     ['getMovieCredits', ['bryan-cranston', false, null]],
     ['getShowCredits', ['bryan-cranston', false, null]],
-    ['lists', [1, 10, 'bryan-cranston', 'personal', 'popular']]
+    ['lists', ['bryan-cranston', 'personal', 'popular', 1, 10]]
 ]);

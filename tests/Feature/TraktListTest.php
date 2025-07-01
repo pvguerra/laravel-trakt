@@ -106,7 +106,7 @@ test('items method calls client with correct parameters', function (string $type
         ->once()
         ->andReturn([]);
     
-    $result = $this->traktList->items($this->page, $this->limit, $this->traktId, $type, $extended, $level);
+    $result = $this->traktList->items($this->traktId, $type, $this->page, $this->limit, $extended, $level);
     
     expect($result)->toBeArray();
 })->with([
@@ -263,7 +263,7 @@ test('items method returns properly formatted items data', function () {
         ->once()
         ->andReturn($expectedData);
     
-    $result = $this->traktList->items($this->page, $this->limit, $this->traktId, 'movies');
+    $result = $this->traktList->items($this->traktId, 'movies', $this->page, $this->limit);
     
     expect($result)
         ->toBeArray()
@@ -300,5 +300,5 @@ test('list methods handle error responses', function (string $method, array $arg
     ['trending', [1, 10]],
     ['popular', [1, 10]],
     ['get', [123456]],
-    ['items', [1, 10, 123456, 'movies', false, null]]
+    ['items', [123456, 'movies', 1, 10, false, null]]
 ]);

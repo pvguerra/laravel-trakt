@@ -59,13 +59,17 @@ class TraktList
      * https://trakt.docs.apiary.io/#reference/lists/list-items/get-items-on-a-list
      * @param int $traktId
      * @param string $type
+     * @param int $page
+     * @param int $limit
+     * @param bool $extended
+     * @param string|null $level
      * @return array
      */
     public function items(
-        int $page = 1,
-        int $limit = 10,
         int $traktId,
         string $type,
+        int $page = 1,
+        int $limit = 10,
         bool $extended = false,
         ?string $level = null,
     ): array

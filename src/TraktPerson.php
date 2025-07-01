@@ -75,11 +75,11 @@ class TraktPerson
      * @return array
      */
     public function lists(
-        int $page = 1,
-        int $limit = 10,
         string|int $traktId,
         string $type = 'personal',
         string $sort = 'popular',
+        int $page = 1,
+        int $limit = 10,
     ): array {
         $params = $this->client->buildPaginationParams($page, $limit);
         return $this->client->get("people/{$traktId}/lists/{$type}/{$sort}", $params)->json();

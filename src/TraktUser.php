@@ -80,13 +80,15 @@ class TraktUser
      * @param string $type
      * @param int $page
      * @param int $limit
+     * @param bool $extended
+     * @param string|null $level
      * @return array
      */
     public function hiddenItems(
-        int $page = 1,
-        int $limit = 10,
         string $section = 'calendar',
         string $type = 'movie',
+        int $page = 1,
+        int $limit = 10,
         bool $extended = false,
         ?string $level = null
     ): array {
@@ -102,11 +104,11 @@ class TraktUser
      * Hide items for a specific section. Here's what type of items can be hidden for each section.
      *
      * https://trakt.docs.apiary.io/#reference/users/add-hidden-items
-     * @param string $section
      * @param array $data
+     * @param string $section
      * @return array
      */
-    public function addHiddenItems(string $section = 'calendar', array $data): array
+    public function addHiddenItems(array $data, string $section = 'calendar'): array
     {
         return $this->client->post("users/hidden/{$section}", $data)->json();
     }
@@ -495,9 +497,12 @@ class TraktUser
      * https://trakt.docs.apiary.io/#reference/users/watchlist/get-watchlist
      * @param string $traktId
      * @param string $type
-     * @param string $sort
+     * @param string $sortBy
+     * @param string $sortHow
      * @param int $page
      * @param int $limit
+     * @param bool $extended
+     * @param string|null $level
      * @return array
      */
     public function watchlist(
@@ -522,9 +527,12 @@ class TraktUser
      * https://trakt.docs.apiary.io/#reference/users/favorites/get-favorites
      * @param string $traktId
      * @param string $type
-     * @param string $sort
+     * @param string $sortBy
+     * @param string $sortHow
      * @param int $page
      * @param int $limit
+     * @param bool $extended
+     * @param string|null $level
      * @return array
      */
     public function favorites(

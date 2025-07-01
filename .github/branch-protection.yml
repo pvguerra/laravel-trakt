@@ -1,0 +1,32 @@
+name: Branch Protection Rules
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/branch-protection.yml'
+
+jobs:
+  set-branch-protection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Branch Protection
+        uses: relaxdiego/github-branch-protection-bot@v1
+        with:
+          github-token: ${{ secrets.ADMIN_TOKEN }}
+          repository: ${{ github.repository }}
+          branch: main
+          enforce-admins: false
+          required-status-checks: |
+            phpstan
+            tests
+          required-status-checks-strict: true
+          required-approving-review-count: 1
+          dismiss-stale-reviews: true
+          allow-force-pushes: false
+          allow-deletions: false

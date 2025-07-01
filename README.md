@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/pvguerra/laravel-trakt/ci.yml?branch=main&label=tests&style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3Aci+branch%3Amain)
-[![PHPStan](https://img.shields.io/badge/PHPStan-level%204-brightgreen.svg?style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3Aci+branch%3Amain)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%205-brightgreen.svg?style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3Aci+branch%3Amain)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![PHP Version](https://img.shields.io/packagist/php-v/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
 [![Total Downloads](https://img.shields.io/packagist/dt/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
@@ -207,7 +207,7 @@ composer test
 
 ### Static Analysis
 
-This package uses [PHPStan](https://phpstan.org/) level 4 for static code analysis. Run the analysis with:
+This package uses [PHPStan](https://phpstan.org/) level 5 for static code analysis. Run the analysis with:
 
 ```bash
 composer analyse

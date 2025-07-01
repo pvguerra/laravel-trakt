@@ -1,12 +1,13 @@
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
-
-# Integrate Laravel with Trakt API
+# Laravel Trakt
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/pvguerra/laravel-trakt/run-tests?label=tests)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/pvguerra/laravel-trakt/Check%20&%20fix%20styling?label=code%20style)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
+[![Tests](https://img.shields.io/github/actions/workflow/status/pvguerra/laravel-trakt/ci.yml?branch=main&label=tests&style=flat-square&event=push)](https://github.com/pvguerra/laravel-trakt/actions/workflows/ci.yml)
+[![PHPStan](https://img.shields.io/github/actions/workflow/status/pvguerra/laravel-trakt/ci.yml?branch=main&label=PHPStan%20L5&style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions/workflows/ci.yml)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![PHP Version](https://img.shields.io/packagist/php-v/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
 [![Total Downloads](https://img.shields.io/packagist/dt/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
+
+This package provides a convenient way to integrate the [Trakt.tv API](https://trakt.docs.apiary.io/) with your Laravel application.
 
 The whole package was developed following the official [Trakt API Documentation](https://trakt.docs.apiary.io/).
 
@@ -24,80 +25,65 @@ You can publish the config file with:
 php artisan vendor:publish --tag="trakt-config"
 ```
 
-This is the contents of the published config file:
+This will publish the `trakt.php` config file to your `config` directory:
 
 ```php
+// config/trakt.php
+
 return [
-    'api_url' => env('TRAKT_API_URL'),
-
+    'api_url' => env('TRAKT_API_URL', 'https://api.trakt.tv'),
     'client_id' => env('TRAKT_CLIENT_ID'),
-
     'client_secret' => env('TRAKT_CLIENT_SECRET'),
-
-    'headers' => [
-        'Content-type' => 'application/json',
-        'trakt-api-version' => env('TRAKT_API_VERSION', '2'),
-        'trakt-api-key' => env('TRAKT_CLIENT_ID'),
-    ],
-
     'redirect_url' => env('TRAKT_REDIRECT_URL'),
-
-    'staging_api_url' => env('STAGING_TRAKT_API_URL'),
-
-    'staging_client_id' => env('STAGING_TRAKT_CLIENT_ID'),
-
-    'staging_client_secret' => env('STAGING_TRAKT_CLIENT_SECRET'),
-
-    'staging_headers' => [
-        'Content-type' => 'application/json',
-        'trakt-api-version' => env('TRAKT_API_VERSION', '2'),
-        'trakt-api-key' => env('STAGING_TRAKT_CLIENT_ID'),
-    ],
+    'staging_api_url' => env('STAGING_TRAKT_API_URL', 'https://api-staging.trakt.tv'),
 ];
 ```
 
-## Usage
+You should add your Trakt API credentials and redirect URI to your `.env` file:
+
+```.env
+TRAKT_CLIENT_ID=your-trakt-client-id
+TRAKT_CLIENT_SECRET=your-trakt-client-secret
+TRAKT_REDIRECT_URL=your-trakt-redirect-url
+```
 
 If you don't have a Trakt client ID, you'll need to [create a new API app](https://trakt.tv/oauth/applications/new).
-Then you'll get all you need to fill the environment variables for configuration.
 
-### Movies
+## Usage
+
+This package provides a fluent interface to interact with the Trakt API. You can either use the `Trakt` facade or dependency injection to access the client.
+
+Most methods return a `Illuminate\Http\Client\Response` object. You can call `->json()` or `->object()` on the response to get the data.
+
+Here is a list of available classes you can use:
+
+- `TraktCalendar`
+- `TraktCertification`
+- `TraktCheckIn`
+- `TraktCountry`
+- `TraktEpisode`
+- `TraktGenre`
+- `TraktLanguage`
+- `TraktList`
+- `TraktMovie`
+- `TraktNetwork`
+- `TraktPerson`
+- `TraktRecommendation`
+- `TraktSearch`
+- `TraktSeason`
+- `TraktShow`
+- `TraktSync`
+- `TraktUser`
+
+### Authentication
+
+Some endpoints require authentication. This package does not handle the OAuth2 flow for you, but it's easy to integrate with [Laravel Socialite](https://laravel.com/docs/socialite) and the [Trakt Socialite Provider](https://socialiteproviders.com/Trakt/).
+
+#### Using with Laravel Socialite
 
 ```php
-use Pvguerra\LaravelTrakt\TraktMovie;
-
-$traktMovie = new TraktMovie();
-
-return $traktMovie->get('the-batman-2022');
-```
-
-### TV Shows
-
-```php
-use Pvguerra\LaravelTrakt\TraktShow;
-
-$traktShow = new TraktShow();
-
-return $traktShow->popular();
-```
-
-### Auth Required
-
-Some endpoints are auth required, for these you'll need an API Token.
-At this point I strongly recommend [Trakt Socialite Providers](https://socialiteproviders.com/Trakt/#trakt) since it extends
-[Laravel Socialite](https://laravel.com/docs/9.x/socialite) and works flawlessly.
-
-Example:
-
-```php
-// web.php
-Route::get('auth/redirect', [OAuthController::class, 'redirect'])->name('trakt.auth');
-Route::get('auth/callback', [OAuthController::class, 'callback'])->name('trakt.callback');
-
-// authController.php
 use Laravel\Socialite\Facades\Socialite;
 
-// Redirecting the user to the OAuth provider.
 public function redirect()
 {
     return Socialite::driver('trakt')->redirect();
@@ -107,22 +93,145 @@ public function redirect()
 public function callback()
 {
     $socialiteUser = Socialite::driver('trakt')->user();
-
-    //...
+    
+    // Store the token in your database
+    $user = auth()->user();
+    $user->trakt_token = $socialiteUser->token;
+    $user->trakt_id = $socialiteUser->id;
+    $user->save();
+    
+    return redirect()->route('dashboard');
 }
 ```
 
-Then with the authenticated user:
+#### Using the token
+
+Once you have an access token, you can set it on the client:
 
 ```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+// Using the facade
+Trakt::setToken('your-access-token');
+
+// Now you can make authenticated requests
+$history = Trakt::sync()->history();
+
+// Or using dependency injection
 use Pvguerra\LaravelTrakt\TraktUser;
 
 $user = auth()->user();
-
-$traktUser = new TraktUser($user->token);
-
+$traktUser = new TraktUser($user->trakt_token);
 return $traktUser->collection($user->trakt_id, 'movies');
 ```
+
+### Examples
+
+#### Movies
+
+Get a single movie:
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+$movie = Trakt::movie()->get('the-batman-2022');
+```
+
+Get popular movies:
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+$popularMovies = Trakt::movie()->popular();
+```
+
+#### TV Shows
+
+Get a single show:
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+$show = Trakt::show()->get('game-of-thrones');
+```
+
+Get trending shows:
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+$trendingShows = Trakt::show()->trending();
+```
+
+#### Search
+
+Search for a movie, show, person, etc.
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+$results = Trakt::search()->query('batman', 'movie');
+```
+
+#### User
+
+Get a user's profile (requires authentication):
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+Trakt::setToken('user-access-token');
+$profile = Trakt::user()->profile('me');
+```
+
+Get a user's watched history (requires authentication):
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+Trakt::setToken('user-access-token');
+$history = Trakt::user()->history('me', 'movies');
+```
+
+#### Calendar
+
+Get all shows airing in the next 7 days:
+```php
+use Pvguerra\LaravelTrakt\Facades\Trakt;
+
+$calendar = Trakt::calendar()->myShows();
+```
+
+## Quality Assurance
+
+### Testing
+
+This package uses [Pest](https://pestphp.com/) for testing. Run the tests with:
+
+```bash
+composer test
+```
+
+### Static Analysis
+
+This package uses [PHPStan](https://phpstan.org/) level 5 for static code analysis. Run the analysis with:
+
+```bash
+composer analyse
+```
+
+### CI/CD
+
+This package uses GitHub Actions to run tests and static analysis on each pull request and push to the main branch. The CI pipeline ensures that:
+
+1. All tests pass
+2. PHPStan analysis passes with no errors
+3. Branch protection rules prevent merging to main if tests or analysis fail
+
+## Requirements
+
+- PHP 8.1 or higher
+- Laravel 9.0 or higher
+
+## Compatibility
+
+| Laravel | PHP       |
+|---------|----------|
+| 9.x     | 8.1, 8.2 |
+| 10.x    | 8.1, 8.2, 8.3 |
 
 ## Documentation
 
@@ -134,9 +243,13 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 Pull requests are welcome!
+
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 

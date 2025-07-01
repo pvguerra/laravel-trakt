@@ -2,28 +2,28 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktPerson extends LaravelTrakt
+class TraktPerson
 {
-    use HttpResponses;
+    public function __construct(protected ClientInterface $client)
+    {
+    }
 
     /**
      * Returns a single person's details.
      *
      * https://trakt.docs.apiary.io/#reference/people/summary
-     * @param string $traktId
-     * @return JsonResponse
+     * @param string|int $traktId
+     * @return array
      */
-    public function get(string $traktId): JsonResponse
-    {
-        $uri = $this->apiUrl . "people/$traktId?extended=full";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+    public function get(
+        string|int $traktId,
+        bool $extended = false,
+        ?string $level = null
+    ): array {
+        $params = $this->client->buildExtendedParams($extended, $level);
+        return $this->client->get("people/{$traktId}", $params)->json();
     }
 
     /**
@@ -31,16 +31,17 @@ class TraktPerson extends LaravelTrakt
      * Each cast object will have a characters array and a standard movie object.
      *
      * https://trakt.docs.apiary.io/#reference/people/summary/get-movie-credits
-     * @param string $traktId
-     * @return JsonResponse
+     * @param string|int $traktId
+     * @return array
      */
-    public function getMovieCredits(string $traktId): JsonResponse
+    public function getMovieCredits(
+        string|int $traktId,
+        bool $extended = false,
+        ?string $level = null
+    ): array
     {
-        $uri = $this->apiUrl . "people/$traktId/movies?extended=full";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        $params = $this->client->buildExtendedParams($extended, $level);
+        return $this->client->get("people/{$traktId}/movies", $params)->json();
     }
 
     /**
@@ -49,40 +50,38 @@ class TraktPerson extends LaravelTrakt
      * If series_regular is true, this person is a series regular and not simply a guest star.
      *
      * https://trakt.docs.apiary.io/#reference/people/summary/get-show-credits
-     * @param string $traktId
-     * @return JsonResponse
+     * @param string|int $traktId
+     * @return array
      */
-    public function getShowCredits(string $traktId): JsonResponse
+    public function getShowCredits(
+        string|int $traktId,
+        bool $extended = false,
+        ?string $level = null
+    ): array
     {
-        $uri = $this->apiUrl . "people/$traktId/shows?extended=full";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        $params = $this->client->buildExtendedParams($extended, $level);
+        return $this->client->get("people/{$traktId}/shows", $params)->json();
     }
 
     /**
      * Returns all lists that contain this person. By default, personal lists are returned sorted by the most popular.
      *
      * https://trakt.docs.apiary.io/#reference/people/summary/get-lists-containing-this-person
-     * @param string $traktId
+     * @param string|int $traktId
      * @param string $type
      * @param string $sort
      * @param int $page
      * @param int $limit
-     * @return JsonResponse
+     * @return array
      */
     public function lists(
-        string $traktId,
+        string|int $traktId,
         string $type = 'personal',
         string $sort = 'popular',
         int $page = 1,
-        int $limit = 10
-    ): JsonResponse {
-        $uri = $this->apiUrl . "people/$traktId/lists/$type/$sort?page=$page&limit=$limit";
-
-        $response = Http::withHeaders($this->headers)->get($uri);
-
-        return self::httpResponse($response);
+        int $limit = 10,
+    ): array {
+        $params = $this->client->buildPaginationParams($page, $limit);
+        return $this->client->get("people/{$traktId}/lists/{$type}/{$sort}", $params)->json();
     }
 }

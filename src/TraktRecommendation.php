@@ -2,13 +2,13 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktRecommendation extends LaravelTrakt
+class TraktRecommendation
 {
-    use HttpResponses;
+    public function __construct(protected ClientInterface $client)
+    {
+    }
 
     /**
      * Movie recommendations for a user. By default, 10 results are returned. You can send a limit to get up to
@@ -18,16 +18,21 @@ class TraktRecommendation extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/recommendations/movies/get-movie-recommendations
      * @param int $page
      * @param int $limit
-     * @param string $ignoreCollected
-     * @return JsonResponse
+     * @param bool $ignoreCollected
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function getMovies(int $page = 1, int $limit = 10, string $ignoreCollected = 'false'): JsonResponse
+    public function getMovies(
+        int $page = 1,
+        int $limit = 10,
+        bool $ignoreCollected = false
+    ): array
     {
-        $uri = $this->apiUrl . "recommendations/movies?page=$page&limit=$limit&ignore_collected=$ignoreCollected";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        $params = $this->client->buildPaginationParams($page, $limit);
+        $params['ignore_collected'] = $ignoreCollected ? 'true' : 'false';
+        
+        return $this->client->get("recommendations/movies", $params)->json();
     }
 
     /**
@@ -35,15 +40,13 @@ class TraktRecommendation extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/recommendations/movies/hide-a-movie-recommendation
      * @param string $traktId
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function hideMovie(string $traktId): JsonResponse
+    public function hideMovie(string $traktId): array
     {
-        $uri = $this->apiUrl . "recommendations/movies/$traktId";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->delete("recommendations/movies/{$traktId}")->json();
     }
 
     /**
@@ -54,16 +57,21 @@ class TraktRecommendation extends LaravelTrakt
      * https://trakt.docs.apiary.io/#reference/recommendations/shows/get-show-recommendations
      * @param int $page
      * @param int $limit
-     * @param string $ignoreCollected
-     * @return JsonResponse
+     * @param bool $ignoreCollected
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function getShows(int $page = 1, int $limit = 10, string $ignoreCollected = 'false'): JsonResponse
+    public function getShows(
+        int $page = 1,
+        int $limit = 10,
+        bool $ignoreCollected = false
+    ): array
     {
-        $uri = $this->apiUrl . "recommendations/shows?page=$page&limit=$limit&ignore_collected=$ignoreCollected";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        $params = $this->client->buildPaginationParams($page, $limit);
+        $params['ignore_collected'] = $ignoreCollected ? 'true' : 'false';
+        
+        return $this->client->get("recommendations/shows", $params)->json();
     }
 
     /**
@@ -71,14 +79,12 @@ class TraktRecommendation extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/recommendations/shows/hide-a-show-recommendation
      * @param string $traktId
-     * @return JsonResponse
+     * @return array
+     * @throws \Illuminate\Http\Client\ConnectionException
+     * @throws \Exception
      */
-    public function hideShow(string $traktId): JsonResponse
+    public function hideShow(string $traktId): array
     {
-        $uri = $this->apiUrl . "recommendations/shows/$traktId";
-
-        $response = Http::withHeaders($this->headers)->withToken($this->apiToken)->get($uri);
-
-        return self::httpResponse($response);
+        return $this->client->delete("recommendations/shows/{$traktId}")->json();
     }
 }

@@ -4,7 +4,7 @@ namespace Pvguerra\LaravelTrakt\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Pvguerra\LaravelTrakt\LaravelTraktServiceProvider;
+use Pvguerra\LaravelTrakt\TraktServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -20,7 +20,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            LaravelTraktServiceProvider::class,
+            TraktServiceProvider::class,
         ];
     }
 

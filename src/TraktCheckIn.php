@@ -2,14 +2,14 @@
 
 namespace Pvguerra\LaravelTrakt;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
-use Pvguerra\LaravelTrakt\Traits\HttpResponses;
+use Pvguerra\LaravelTrakt\Contracts\ClientInterface;
 
-class TraktCheckIn extends LaravelTrakt
+class TraktCheckIn
 {
-    use HttpResponses;
 
+    public function __construct(protected ClientInterface $client)
+    {
+    }
     /**
      * Check into a movie or episode. This should be tied to a user action to manually
      * indicate they are watching something. The item will display as watching on the site,
@@ -17,29 +17,21 @@ class TraktCheckIn extends LaravelTrakt
      *
      * https://trakt.docs.apiary.io/#reference/checkin/checkin/check-into-an-item
      * @param array $data
-     * @return JsonResponse
+     * @return array
      */
-    public function checkIn(array $data): JsonResponse
+    public function checkIn(array $data): array
     {
-        $uri = $this->apiUrl . "checkin";
-
-        $response = Http::withHeaders($this->headers)->post($uri, $data);
-
-        return self::httpResponse($response);
+        return $this->client->post("checkin", $data)->json();
     }
 
     /**
      * Removes any active checkins, no need to provide a specific item.
      *
      * https://trakt.docs.apiary.io/#reference/checkin/checkin/delete-any-active-checkins
-     * @return JsonResponse
+     * @return array
      */
-    public function deleteCheckIns(): JsonResponse
+    public function deleteCheckIns(): array
     {
-        $uri = $this->apiUrl . "checkin";
-
-        $response = Http::withHeaders($this->headers)->delete($uri);
-
-        return self::httpResponse($response);
+        return $this->client->delete("checkin")->json();
     }
 }

@@ -1,8 +1,10 @@
 # Laravel Trakt
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/pvguerra/laravel-trakt/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/pvguerra/laravel-trakt/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/pvguerra/laravel-trakt/ci.yml?branch=main&label=tests&style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3Aci+branch%3Amain)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%204-brightgreen.svg?style=flat-square)](https://github.com/pvguerra/laravel-trakt/actions?query=workflow%3Aci+branch%3Amain)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![PHP Version](https://img.shields.io/packagist/php-v/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
 [![Total Downloads](https://img.shields.io/packagist/dt/pvguerra/laravel-trakt.svg?style=flat-square)](https://packagist.org/packages/pvguerra/laravel-trakt)
 
 This package provides a convenient way to integrate the [Trakt.tv API](https://trakt.docs.apiary.io/) with your Laravel application.
@@ -77,15 +79,50 @@ Here is a list of available classes you can use:
 
 Some endpoints require authentication. This package does not handle the OAuth2 flow for you, but it's easy to integrate with [Laravel Socialite](https://laravel.com/docs/socialite) and the [Trakt Socialite Provider](https://socialiteproviders.com/Trakt/).
 
+#### Using with Laravel Socialite
+
+```php
+use Laravel\Socialite\Facades\Socialite;
+
+public function redirect()
+{
+    return Socialite::driver('trakt')->redirect();
+}
+
+// Receiving the callback from the provider after authentication.
+public function callback()
+{
+    $socialiteUser = Socialite::driver('trakt')->user();
+    
+    // Store the token in your database
+    $user = auth()->user();
+    $user->trakt_token = $socialiteUser->token;
+    $user->trakt_id = $socialiteUser->id;
+    $user->save();
+    
+    return redirect()->route('dashboard');
+}
+```
+
+#### Using the token
+
 Once you have an access token, you can set it on the client:
 
 ```php
 use Pvguerra\LaravelTrakt\Facades\Trakt;
 
+// Using the facade
 Trakt::setToken('your-access-token');
 
 // Now you can make authenticated requests
 $history = Trakt::sync()->history();
+
+// Or using dependency injection
+use Pvguerra\LaravelTrakt\TraktUser;
+
+$user = auth()->user();
+$traktUser = new TraktUser($user->trakt_token);
+return $traktUser->collection($user->trakt_id, 'movies');
 ```
 
 ### Examples
@@ -158,58 +195,43 @@ use Pvguerra\LaravelTrakt\Facades\Trakt;
 $calendar = Trakt::calendar()->myShows();
 ```
 
-## Testing
+## Quality Assurance
+
+### Testing
+
+This package uses [Pest](https://pestphp.com/) for testing. Run the tests with:
 
 ```bash
 composer test
 ```
 
-## Changelog
+### Static Analysis
 
-Please see [CHANGELOG.md](CHANGELOG.md) for more information on what has changed recently.
+This package uses [PHPStan](https://phpstan.org/) level 4 for static code analysis. Run the analysis with:
 
-## Contributing
-
-Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [Paulo Guerra](https://github.com/pvguerra)
-- [All Contributors](../../contributors)
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-public function redirect()
-{
-    return Socialite::driver('trakt')->redirect();
-}
-
-// Receiving the callback from the provider after authentication.
-public function callback()
-{
-    $socialiteUser = Socialite::driver('trakt')->user();
-
-    //...
-}
+```bash
+composer analyse
 ```
 
-Then with the authenticated user:
+### CI/CD
 
-```php
-use Pvguerra\LaravelTrakt\TraktUser;
+This package uses GitHub Actions to run tests and static analysis on each pull request and push to the main branch. The CI pipeline ensures that:
 
-$user = auth()->user();
+1. All tests pass
+2. PHPStan analysis passes with no errors
+3. Branch protection rules prevent merging to main if tests or analysis fail
 
-$traktUser = new TraktUser($user->token);
+## Requirements
 
-return $traktUser->collection($user->trakt_id, 'movies');
-```
+- PHP 8.1 or higher
+- Laravel 9.0 or higher
+
+## Compatibility
+
+| Laravel | PHP       |
+|---------|----------|
+| 9.x     | 8.1, 8.2 |
+| 10.x    | 8.1, 8.2, 8.3 |
 
 ## Documentation
 
@@ -221,9 +243,13 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/spatie/.github/blob/main/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 Pull requests are welcome!
+
+## Security Vulnerabilities
+
+Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
 ## Credits
 

@@ -223,15 +223,16 @@ This package uses GitHub Actions to run tests and static analysis on each pull r
 
 ## Requirements
 
-- PHP 8.1 or higher
-- Laravel 9.0 or higher
+- PHP 8.3, 8.4, or 8.5
+- Laravel 11, 12, or 13
 
 ## Compatibility
 
-| Laravel | PHP       |
-|---------|----------|
-| 9.x     | 8.1, 8.2 |
-| 10.x    | 8.1, 8.2, 8.3 |
+| Laravel | PHP           |
+|---------|---------------|
+| 11.x    | 8.3, 8.4      |
+| 12.x    | 8.3, 8.4, 8.5 |
+| 13.x    | 8.3, 8.4, 8.5 |
 
 ## Documentation
 
